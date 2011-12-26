@@ -1,8 +1,10 @@
-<div class="content">
+<div class="content" style="text-align: center;">
 	<?php foreach ($authors as $author) : ?>
 		<img src="<?php echo $author['img']; ?>"
-			title="<?php echo $author['name'] ?>"
-			alt="<?php echo $author['name'] ?>"
+			alt="<?php echo $author['name']; ?>"
+			title="<?php echo $author['name']; ?>"
+			height="<?php echo (int) $author['size']; ?>"
+			style="margin: 2px 3px; border: 6px solid #232323; padding: 3px;"
 		/>
 	<?php endforeach; ?>
 </div>

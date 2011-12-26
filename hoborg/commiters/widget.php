@@ -1,29 +1,85 @@
 <?php
+// main check for data file.
 if (empty($widget['conf']['data'])) {
 	$widget['body'] = '';
 	$widget['error'] = 'Missing or empty data configuration `widget.conf.data`';
 	return $widget;
 }
 
-$data = json_decode(file_get_contents(__DIR__ . '/../../data/' . $widget['conf']['dataFile']), true);
+$dataFile = $path = $this->kernel->findFileOnPath(
+	$widget['conf']['data'],
+	$this->kernel->getDataPath()
+);
 
-$authors = array();
+if (!$dataFile) {
+	$widget['body'] = '';
+	$widget['error'] = "Data file is not readable `{$widget['conf']['data']}`";
+	return $widget;
+}
 
-foreach ($data as & $commit) {
+$this->setDefaults(array(
+	'conf' => array(
+		'cache' => false,
+		'mustachify' => 0,
+		'minHeight' => 60,
+		'maxHeight' => 120,
+	),
+));
+
+// do we want to cache images
+$cacheDir = false;
+if ($widget['conf']['cache']) {
+	$cacheDir = $this->kernel->getParam('publicPrefix', '') . $widget['conf']['cache'];
+	if (!is_writable($cacheDir)) {
+		$cacheDir = false;
+	}
+}
+
+$authors = json_decode(file_get_contents($dataFile), true);
+$last = end($authors);
+$first = reset($authors);
+
+$minHeight = $widget['conf']['minHeight'];
+$maxHeight = $widget['conf']['maxHeight'];
+
+$resizeFactor = ($maxHeight - $minHeight) / ($first['count'] - $last['count']);
+$delta = $minHeight - ($last['count'] * $resizeFactor);
+
+foreach ($authors as & $author) {
+
+	$md5 = md5($author['email']);
 	$addons = array(
-		'img' => 'http://www.gravatar.com/avatar/' . md5($commit['commit']['committer']['email']),
+		'img' => 'http://www.gravatar.com/avatar/' . $md5 . '?s=' . $maxHeight,
+		'size' => $author['count'] * $resizeFactor + $delta,
 	);
 	if ($widget['conf']['mustachify']) {
-		$id = rand(0, 2);
-		$addons['img'] = 'http://mustachify.me/' . $id . '?src=' . $addons['img'];
+		$addons['img'] = 'http://mustachify.me/?src=' . urldecode($addons['img']);
 	}
-	$authors[$commit['commit']['committer']['email']] = $commit['commit']['committer'] + $addons;
+
+	if ($cacheDir) {
+		$fileName = $md5 . '.jpg';
+		if ($widget['conf']['mustachify']) {
+			$fileName = 'mustache-' . $fileName;
+		}
+		if (!is_readable(H_D_ROOT . '/htdocs/' . $cacheDir . '/' . $fileName)) {
+			$imgData = file_get_contents($addons['img']);
+			if (!empty($imgData)) {
+				file_put_contents($cacheDir . '/' . $fileName, $imgData);
+				$addons['img'] = $cacheDir . '/' . $fileName;
+			}
+		}
+		$addons['img'] = $cacheDir . '/' . $fileName;
+		if (!file_exists(H_D_ROOT . '/htdocs/' . $cacheDir . '/' . $fileName)) {
+			$addons['img'] = "/dev-avatars/default-02.png";
+		}
+	}
+
+	$author = $author + $addons;
 }
-unset($commit);
+unset($author);
 
 ob_start();
-include __DIR__ . '/commiters.phtml';
+include __DIR__ . '/view.phtml';
 $widget['body'] = ob_get_clean();
-
 
 return $widget;
