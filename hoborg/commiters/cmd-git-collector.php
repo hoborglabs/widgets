@@ -1,20 +1,25 @@
 <?php
+$defaults = array(
+	'git' => 'git',
+	'branch' => 'master',
+	'wd' => null,
+	'out' => null
+);
+$options = $params + $defaults;
+if (empty($options['wd']) || empty($options['out'])) {
+	exit('please specify Working Directory `wd` and Output Direcotry `out`');
+}
 
-$git = 'git';
-$dir = '/Users/oledzkiw/Workspace/hoborglabs-dashboard';
-$dataDir = $dir; //__DIR__ . '/../data/';
-$branch = 'master';
-$cmd = "{$git} log -100 --format=\"%h,%ae,%an\" origin/{$branch}";
+$cmd = "{$options['git']} log -100 --format=\"%h,%ae,%an\" origin/{$options['branch']}";
 $logs = array();
 
-chdir($dir);
+chdir($options['wd']);
 exec($cmd, $logs);
 
 $commits = parse_log($logs);
 $commiters = get_commiters($commits);
 
-file_put_contents($dataDir . '/git-logs.js', json_encode($commiters));
-
+file_put_contents($options['out'], json_encode($commiters));
 
 function parse_log(array $logLines) {
 	$commits = array();
