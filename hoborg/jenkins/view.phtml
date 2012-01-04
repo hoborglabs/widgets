@@ -1,0 +1,72 @@
+<?php
+function get_face($mood = 'positive') {
+    $faces = array(
+        'positive' => array('byebye', 'big_smile', 'haha', 'beauty', 'boss', 'feel_good'),
+        'neutral' => array('angry', 'confuse'),
+        'negative' => array('after_boom', 'ah', 'beat_brick', 'beat_shot', 'beat_plaster', 'beated'),
+        'building' => array('matrix'),
+    );
+
+    srand(microtime(true)*1000000);
+    $basePath = '/styles/templates/hoborg/gfx/faces/';
+    $randFaceIndex = rand(0, count($faces[$mood])-1);
+
+    return $basePath . $faces[$mood][$randFaceIndex] . '.png';
+}
+?>
+<?php foreach ($jobs as $job) : ?>
+    <?php
+    if (0 === strpos($job['name'], 'release-')) { continue; }
+    $extras = '';
+
+    $stateClass = '';
+    $mood = 'neutral';
+    if ('SUCCESS' == $job['lastBuild']['result']) {
+        $mood = 'positive';
+        $stateClass = 'text-L';
+    }
+    if ('UNSTABLE' == $job['lastBuild']['result']) {
+        $mood = 'negative';
+        $stateClass = 'text-XL';
+    }
+    if ('FAILURE' == $job['lastBuild']['result']) {
+        $mood = 'negative';
+        $stateClass = 'text-XL';
+        if (true === $job['inQueue']) {
+            $extras = 'Waiting in build queue';
+        }
+    }
+
+    if ('ABORTED' === $job['lastBuild']['result']) {
+        $mood = 'neutral';
+        $stateClass = 'text-L';
+        $extras = 'Aborted and IN QUEUE!';
+
+        if (false === $job['inQueue']) {
+            $mood = 'negative';
+            $stateClass = 'text-XL';
+            $extras = 'Aborted and NOT IN QUEUE!';
+        }
+    }
+
+    if ($job['lastBuild']['building']) {
+        $job['lastBuild']['result'] = 'BUILDING';
+        $mood = 'building';
+        $extras = 'Building ...';
+        $stateClass = 'text-L ';
+    }
+    ?>
+
+    <div style="margin: 0px 5px 10px; padding: 10px 0px; height: 80px"
+        class="build-<?php echo $mood; ?>"
+    >
+        <img src="<?php echo get_face($mood); ?>" height="70" style="float:left; margin: 0px 10px 0px 5px;" />
+        <div>
+            <span class="<?php echo $stateClass .' ' . $mood; ?>"><?php echo $job['name'] ?></span> (<?php echo $job['lastBuild']['number'] ?>)<br />
+            <?php if (!empty($extras)) : ?>
+                <span class="text-M"><?php echo $extras; ?></span><br />
+            <?php endif; ?>
+            (<?php echo date('M d H:i', $job['lastBuild']['timestamp']/1000); ?>)
+        </div>
+    </div>
+<?php endforeach; ?>

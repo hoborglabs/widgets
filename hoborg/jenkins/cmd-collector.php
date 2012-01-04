@@ -45,7 +45,7 @@ class Collector {
 
 		foreach ($tree as $key => $val) {
 			if (is_array($val)) {
-				$value .= ','.$key.'['.get_tree_value($val).']';
+				$value .= ','.$key.'['. $this->get_tree_value($val) . ']';
 			} else {
 				$value .= ','.$val;
 			}

@@ -17,7 +17,7 @@ if (!$dataFile) {
 	return $widget;
 }
 
-$this->setDefaults(array(
+$this->addDefaults(array(
 	'conf' => array(
 		'cache' => false,
 		'mustachify' => 0,
@@ -25,11 +25,12 @@ $this->setDefaults(array(
 		'maxHeight' => 120,
 	),
 ));
+$conf = $this->getData('conf');
 
 // do we want to cache images
 $cacheDir = false;
-if ($widget['conf']['cache']) {
-	$cacheDir = $this->kernel->getParam('publicPrefix', '') . $widget['conf']['cache'];
+if ($conf['cache']) {
+	$cacheDir = $this->kernel->getParam('publicPrefix', '') . $conf['cache'];
 	if (!is_writable($cacheDir)) {
 		$cacheDir = false;
 	}
@@ -39,8 +40,8 @@ $authors = json_decode(file_get_contents($dataFile), true);
 $last = end($authors);
 $first = reset($authors);
 
-$minHeight = $widget['conf']['minHeight'];
-$maxHeight = $widget['conf']['maxHeight'];
+$minHeight = $conf['minHeight'];
+$maxHeight = $conf['maxHeight'];
 
 $resizeFactor = ($maxHeight - $minHeight) / ($first['count'] - $last['count']);
 $delta = $minHeight - ($last['count'] * $resizeFactor);
@@ -52,13 +53,13 @@ foreach ($authors as & $author) {
 		'img' => 'http://www.gravatar.com/avatar/' . $md5 . '?s=' . $maxHeight,
 		'size' => $author['count'] * $resizeFactor + $delta,
 	);
-	if ($widget['conf']['mustachify']) {
+	if ($conf['mustachify']) {
 		$addons['img'] = 'http://mustachify.me/?src=' . urldecode($addons['img']);
 	}
 
 	if ($cacheDir) {
 		$fileName = $md5 . '.jpg';
-		if ($widget['conf']['mustachify']) {
+		if ($conf['mustachify']) {
 			$fileName = 'mustache-' . $fileName;
 		}
 		if (!is_readable(H_D_ROOT . '/htdocs/' . $cacheDir . '/' . $fileName)) {
