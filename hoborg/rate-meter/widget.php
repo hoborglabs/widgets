@@ -9,7 +9,10 @@ if (empty($widget['conf']['data'])) {
 	return $widget;
 }
 
-$dataFile = DATA_DIR . '/' . $widget['conf']['data'];
+$dataFile = $path = $this->kernel->findFileOnPath(
+	$widget['conf']['data'],
+	$this->kernel->getDataPath()
+);
 
 if (!is_readable($dataFile)) {
 	$widget['body'] = "$dataFile not readable";
