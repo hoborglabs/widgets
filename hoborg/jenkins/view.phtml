@@ -1,4 +1,7 @@
 <?php
+$p = $this->kernel->getConfig();
+$p = empty($p['public']) ? '' : $p['public'];
+
 function get_face($mood = 'positive') {
     $faces = array(
         'positive' => array('byebye', 'big_smile', 'haha', 'beauty', 'boss', 'feel_good'),
@@ -60,7 +63,7 @@ function get_face($mood = 'positive') {
     <div style="margin: 0px 5px 10px; padding: 10px 0px; height: 80px"
         class="build-<?php echo $mood; ?>"
     >
-        <img src="<?php echo get_face($mood); ?>" height="70" style="float:left; margin: 0px 10px 0px 5px;" />
+        <img src="<?php echo $p . get_face($mood); ?>" height="70" style="float:left; margin: 0px 10px 0px 5px;" />
         <div>
             <span class="<?php echo $stateClass .' ' . $mood; ?>"><?php echo $job['name'] ?></span> (<?php echo $job['lastBuild']['number'] ?>)<br />
             <?php if (!empty($extras)) : ?>

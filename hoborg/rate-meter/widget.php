@@ -15,8 +15,8 @@ class RateMeterWidget extends \Hoborg\Dashboard\Widget {
 		}
 
 		$dataFile = $this->kernel->findFileOnPath(
-		$widget['conf']['data'],
-		$this->kernel->getDataPath()
+			$widget['conf']['data'],
+			$this->kernel->getDataPath()
 		);
 
 		if (!is_readable($dataFile)) {
