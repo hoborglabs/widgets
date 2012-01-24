@@ -7,6 +7,7 @@ class GitCollector {
 		$defaults = array(
 			'git' => 'git',
 			'branch' => 'master',
+			'count' => 100,
 			'wd' => null,
 			'out' => null
 		);
@@ -15,7 +16,7 @@ class GitCollector {
 			exit("please specify Working Directory `wd` and Output Direcotry `out`\n");
 		}
 
-		$cmd = "{$options['git']} log -100 --format=\"%h,%ae,%an\" origin/{$options['branch']}";
+		$cmd = "{$options['git']} log -{$options['count']} --format=\"%h,%ae,%an\" origin/{$options['branch']}";
 		$logs = array();
 
 		chdir($options['wd']);
