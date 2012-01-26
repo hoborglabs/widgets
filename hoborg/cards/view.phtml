@@ -1,0 +1,13 @@
+<div class="content">
+	<?php foreach ($cards as $card) : ?>
+		<div class="card">
+			<?php if (!empty($card['assignee_details'])) : ?>
+				<img class="assignee" height="40" style="float: right" src="http://www.gravatar.com/avatar/<?php echo md5($card['assignee_details']['email']); ?>?s=40" />
+			<?php endif; ?>
+			<h4><span><?php echo $card['id']; ?></span> <?php echo $card['subject']; ?></h4>
+			<?php if (!empty($card['assignee'])) : ?>
+				<span class="assignee">Assignee: <?php echo $card['assignee']; ?></span>
+			<?php endif; ?>
+		</div>
+	<?php endforeach; ?>
+</div>
