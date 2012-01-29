@@ -1,5 +1,5 @@
 <?php
-namespace Hoborg\Dashboard\Widget\Commiters;
+namespace Hoborg\Dashboard\Widget\Cards;
 
 class GitCollector {
 

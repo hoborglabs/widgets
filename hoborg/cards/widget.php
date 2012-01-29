@@ -1,4 +1,5 @@
 <?php
+namespace Hoborg\Dashboard\Widget\Cards;
 
 class CardsWidget extends \Hoborg\Dashboard\Widget {
 
@@ -20,13 +21,22 @@ class CardsWidget extends \Hoborg\Dashboard\Widget {
 		$allCards = json_decode(file_get_contents($dataFile), true);
 		$cards = array();
 
-		$statuses = $widget['conf']['statuses'];
+		$filter = $widget['conf']['filter'];
 
-		foreach ($allCards as $card) {
-			if (in_array($card['status_id'], $statuses)) {
-				$cards[] = $card;
+		if (!empty($filter)) {
+			foreach ($allCards as $card) {
+				foreach ($filter as $key => $allowedValues)
+				if (in_array($card[$key], $allowedValues)) {
+					$cards[] = $card;
+				}
 			}
+		} else {
+			$cards = $allCards;
 		}
+		foreach ($cards as & $card) {
+			$card['id'] = substr($card['id'], -6);
+		}
+		unset($card);
 
 		$widget['name'] =  $widget['name_core'] . ' (count: ' . count($cards) . ')';
 
