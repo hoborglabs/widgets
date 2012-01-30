@@ -7,8 +7,9 @@ class GithubCollector {
 		$defaults = array(
 			'user' => null,
 			'repo' => null,
-			'branch' => 'master',
 			'out' => null,
+			'branch' => 'master',
+			'count' => 100,
 		);
 		$options = $params + $defaults;
 		if (empty($options['user']) || empty($options['repo']) || empty($options['out'])) {
@@ -22,6 +23,7 @@ class GithubCollector {
 		}
 
 		$commits = json_decode($logs, true);
+		$commits = array_slice($commits, 0, $options['count']);
 
 		$commits = $this->parseCommits($commits);
 		$commiters = $this->getCommiters($commits);
@@ -68,8 +70,9 @@ class GithubCollector {
 please specify options for Github collector:
   user    github user
   repo    github repository name
-  branch  (optional) branch name
   out     output file name
+  branch  (optional) branch name
+  count   (optional) number of commits to count
 
 example usage
 ./bin/cmd -c widget.hoborg.commiters.github-collector -d user=hoborglabs -d repo=Dashboard -d out=commits.json
