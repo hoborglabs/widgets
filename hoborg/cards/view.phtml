@@ -4,7 +4,13 @@
 			<?php if (!empty($card['assignee_details'])) : ?>
 				<img class="assignee" height="40" style="float: right" src="http://www.gravatar.com/avatar/<?php echo md5($card['assignee_details']['email']); ?>?s=40" />
 			<?php endif; ?>
-			<h4><span><?php echo $card['id']; ?></span> <?php echo $card['subject']; ?></h4>
+			<h4>
+				<span>
+					<a href="<?php echo $widget['conf']['issue_link'] . $card['id']; ?>"><?php echo $card['id']; ?></a>
+					(<?php echo $card['status_name']?>)
+				</span>
+				<?php echo $card['subject']; ?>
+			</h4>
 			<?php if (!empty($card['assignee'])) : ?>
 				<span class="assignee">Assignee: <?php echo $card['assignee']; ?></span>
 			<?php endif; ?>

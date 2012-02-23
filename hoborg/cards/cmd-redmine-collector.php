@@ -46,7 +46,7 @@ class GitCollector {
 		$userUrl = "http://redmine.skybet.net/users/";
 		foreach ($users as $key => & $user) {
 			$data = file_get_contents($userUrl . $key . '.xml?key=' . $options['key']);
-			$d = new SimpleXMLElement($data);
+			$d = new \SimpleXMLElement($data);
 			$user = array(
 				'id' => (string) $d->id,
 				'email' => (string) $d->mail,
@@ -76,7 +76,7 @@ class GitCollector {
 		}
 
 		// save issues data
-		$d = new SimpleXMLElement($data);
+		$d = new \SimpleXMLElement($data);
 		foreach($d->issue as $issue) {
 			$issueCopy = array();
 
