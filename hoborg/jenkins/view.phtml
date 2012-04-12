@@ -26,15 +26,15 @@ function get_face($mood = 'positive') {
     $mood = 'neutral';
     if ('SUCCESS' == $job['lastBuild']['result']) {
         $mood = 'positive';
-        $stateClass = 'text-L';
+        $stateClass = 'text-M';
     }
     if ('UNSTABLE' == $job['lastBuild']['result']) {
         $mood = 'negative';
-        $stateClass = 'text-XL';
+        $stateClass = 'text-M';
     }
     if ('FAILURE' == $job['lastBuild']['result']) {
         $mood = 'negative';
-        $stateClass = 'text-XL';
+        $stateClass = 'text-M';
         if (true === $job['inQueue']) {
             $extras = 'Waiting in build queue';
         }
@@ -42,12 +42,12 @@ function get_face($mood = 'positive') {
 
     if ('ABORTED' === $job['lastBuild']['result']) {
         $mood = 'neutral';
-        $stateClass = 'text-L';
+        $stateClass = 'text-M';
         $extras = 'Aborted and IN QUEUE!';
 
         if (false === $job['inQueue']) {
             $mood = 'negative';
-            $stateClass = 'text-XL';
+            $stateClass = 'text-M';
             $extras = 'Aborted and NOT IN QUEUE!';
         }
     }
@@ -56,7 +56,7 @@ function get_face($mood = 'positive') {
         $job['lastBuild']['result'] = 'BUILDING';
         $mood = 'building';
         $extras = 'Building ...';
-        $stateClass = 'text-L ';
+        $stateClass = 'text-M ';
     }
     ?>
 
