@@ -60,16 +60,16 @@ function get_face($mood = 'positive') {
     }
     ?>
 
-    <div style="margin: 0px 5px 10px; padding: 10px 0px; height: 80px"
-        class="build-<?php echo $mood; ?>"
+    <div style="padding: 10px 0px; height: 70px"
+        class="panel build-<?php echo $mood; ?>"
     >
         <img src="<?php echo $p . get_face($mood); ?>" height="70" style="float:left; margin: 0px 10px 0px 5px;" />
         <div>
-            <span class="<?php echo $stateClass .' ' . $mood; ?>"><?php echo $job['name'] ?></span> (<?php echo $job['lastBuild']['number'] ?>)<br />
+            <span class="<?php echo $stateClass .' ' . $mood; ?>"><?php echo $job['name'] ?></span><br />
             <?php if (!empty($extras)) : ?>
                 <span class="text-M"><?php echo $extras; ?></span><br />
             <?php endif; ?>
-            (<?php echo date('M d H:i', $job['lastBuild']['timestamp']/1000); ?>)
+            (build: <?php echo $job['lastBuild']['number'] ?>, date: <?php echo date('M d H:i', $job['lastBuild']['timestamp']/1000); ?>)
         </div>
     </div>
 <?php endforeach; ?>

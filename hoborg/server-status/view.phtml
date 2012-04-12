@@ -3,8 +3,8 @@
 	<?php foreach ($group as $server) : ?>
 		<div class="panel">
 			<span class="label" style="width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><?php echo $server['name']; ?></span>
-			<div class="btn-group">
-				<span class="label <?php echo $server['class_on']; ?>">on</span><span class="label <?php echo $server['class_off']; ?>">off</span>
+			<div class="label-group">
+				<span class="<?php echo $server['class_on']; ?>">on</span><span class="<?php echo $server['class_off']; ?>">off</span>
 			</div>
 		</div>
 	<?php endforeach; ?>
