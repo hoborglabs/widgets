@@ -23,7 +23,16 @@ class ServerStatusWidget extends \Hoborg\Dashboard\Widget {
 
 		// now prepare groups of servers
 		$servers = $widget['conf']['servers'];
+		$labelWidth = empty($widget['conf']['label-width']) ?
+			100 : $widget['conf']['label-width'];
+		$displayGroup = true;
 
+		$first = reset($servers);
+
+		if (!is_array($first)) {
+			$servers = array($servers);
+			$displayGroup = false;
+		}
 		foreach ($servers as $groupName => & $group) {
 			foreach ($group as $key => $srvName) {
 				if (empty($serverMap[$srvName])) {
