@@ -29,7 +29,7 @@ class RateMeterWidget extends \Hoborg\Dashboard\Widget {
 
 		$lastValue = array_shift($data);
 		$previousValue = array_shift($data);
-		$delta = number_format(($lastValue - $previousValue) / $lastValue, 2);
+		$delta = number_format(($lastValue - $previousValue) / $lastValue * 100, 2);
 		$lastValue = number_format($lastValue, 2);
 		$class = $delta >= 0 ? 'positive' : 'negative';
 

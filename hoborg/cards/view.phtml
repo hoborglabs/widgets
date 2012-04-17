@@ -5,10 +5,9 @@
 				<img class="assignee" height="40" style="float: right" src="http://www.gravatar.com/avatar/<?php echo md5($card['assignee_details']['email']); ?>?s=40" />
 			<?php endif; ?>
 			<h4>
-				<span>
-					<a href="<?php echo $widget['conf']['issue_link'] . $card['id']; ?>"><?php echo $card['id']; ?></a>
-					(<?php echo $card['status_name']?>)
-				</span>
+				<?php if ($card['url']) : ?>
+					<span><a href="<?php echo $card['url']; ?>"><?php echo $card['id']; ?></a></span>
+				<?php endif; ?>
 				<?php echo $card['subject']; ?>
 			</h4>
 			<?php if (!empty($card['assignee'])) : ?>

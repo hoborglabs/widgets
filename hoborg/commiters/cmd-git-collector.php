@@ -9,7 +9,7 @@ class GitCollector {
 			'branch' => 'master',
 			'count' => 100,
 			'wd' => null,
-			'out' => null
+			'out' => null,
 		);
 		$options = $params + $defaults;
 		if (empty($options['wd']) || empty($options['out'])) {
