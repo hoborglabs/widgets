@@ -30,11 +30,12 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 	    $widget = $this->data;
 	    $target = $targetConf['target'];
 	    $factor = empty($targetConf['factor']) ? 1 : $targetConf['factor'];
-	    $from = '-10min';
+	    $from = empty($targetConf['from']) ? '-10min' : $targetConf['from'];
 	    $until = 'now';
 	    $graphiteUrl = 'http://graphs.skybet.net';
 
-	    $imageUrl = $graphiteUrl . "/render?from=-30min&until={$until}&target={$target}&width=100&height=40&bgcolor=282828&hideLegend=true&hideAxes=true&margin=0";
+	    $t = time();
+	    $imageUrl = $graphiteUrl . "/render?from=-30min&until={$until}&target={$target}&width=100&height=40&bgcolor=282828&hideLegend=true&hideAxes=true&margin=0&t={$t}";
 	    $dataUrl = $graphiteUrl . "/render?from={$from}&until={$until}&target={$target}&format=json";
 
 	    $jsonData = file_get_contents($dataUrl);
@@ -76,6 +77,11 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 	    }
 	    $class = "text-S icon {$class}";
 
+	    $coldColor = empty($targetConf['colors']['cold']['color']) ? 'FFFFFF' : $targetConf['colors']['cold']['color'];
+	    $coldValue = empty($targetConf['colors']['cold']['value']) ? 0 : $targetConf['colors']['cold']['value'];
+	    $hotColor = empty($targetConf['colors']['hot']['color']) ? 'FF0000' : $targetConf['colors']['hot']['color'];
+	    $hotValue = empty($targetConf['colors']['hot']['value']) ? 100 : $targetConf['colors']['hot']['value'];
+
 	    $targetConf += array(
 	            'name' => $targetConf['label'],
 	            'avg' => $avg,
@@ -84,8 +90,28 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 	            'max' => $max,
 	            'class' => $class,
 	            'img' => $imageUrl,
+	    		'color' => $this->getColor($avg, $coldValue, $hotValue, $coldColor, $hotColor)
 	    );
 
 	    return $targetConf;
+	}
+
+	protected function getColor($value, $min, $max, $minColor = 'FFFFFF', $maxColor = 'FF0000') {
+		$value = min($max, max($min, $value));
+	    $value = abs($value - $min);
+	    $range = abs($max - $min);
+	    $delta = $value / $range;
+
+	    // now, lets calculate color on a 3D matrix
+	    list($ax, $ay, $az) = array(hexdec(substr($minColor, 0, 2)), hexdec(substr($minColor, 2, 2)),
+	            hexdec(substr($minColor, 4, 2)));
+	    list($bx, $by, $bz) = array(hexdec(substr($maxColor, 0, 2)), hexdec(substr($maxColor, 2, 2)),
+	            hexdec(substr($maxColor, 4, 2)));
+
+	    $cx = $ax + ($bx - $ax) * $delta;
+	    $cy = $ay + ($by - $ay) * $delta;
+	    $cz = $az + ($bz - $az) * $delta;
+
+	    return str_pad(dechex($cx), 2, '0') . str_pad(dechex($cy), 2, '0') . str_pad(dechex($cz), 2, '0');
 	}
 }
