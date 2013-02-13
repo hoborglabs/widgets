@@ -3,8 +3,15 @@
         <span class="text-XL" style="color: #<?php echo $stat['color']?>"><?php echo $stat['avg']; ?></span>
         <div style="display: inline-block; margin-left: 4px">
             <span class="text-M"><?php echo $stat['name']?></span><br />
-            <?php echo $stat['unit']; ?>, <span class="<?php echo $stat['class']; ?>"><?php echo $stat['delta']; ?></span>
+            <?php echo $stat['unit']; ?>, <span class="<?php echo $stat['class']; ?>"><?php echo $stat['delta']; ?></span><br />
+            max: <?php echo $stat['max']; ?>, min: <?php echo $stat['min']; ?> 
         </div>
-        <img src="<?php echo $stat['img']; ?>" style="float: right" />
+        <?php if ($stat['img-link']) : ?>
+            <a href="<?php echo $stat['img-link'] ?>">
+                <img src="<?php echo $stat['img']; ?>" style="float: right" />
+            </a>
+        <?php else :  ?>
+            <img src="<?php echo $stat['img']; ?>" style="float: right" />
+        <?php endif; ?>
     </div>
 <?php endforeach; ?>

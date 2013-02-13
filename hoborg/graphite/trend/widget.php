@@ -14,13 +14,17 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 			return;
 		}
 
+		$tplName = empty($widget['conf']['view']) ? 'view' : $widget['conf']['view'];
 		$targetStats = array();
 		foreach ($widget['conf']['targets'] as $targetConf) {
-		    $targetStats[] = $this->processTarget($targetConf);
+			if ('horizontal' == $tplName) {
+				$targetConf['image']['height'] = 30;
+			}
+			$targetStats[] = $this->processTarget($targetConf);
 		}
 
 		ob_start();
-		include __DIR__ . '/view.phtml';
+		include __DIR__ . "/{$tplName}.phtml";
 		$widget['body'] = ob_get_clean();
 
 		$this->data = $widget;
@@ -31,12 +35,50 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 	    $target = $targetConf['target'];
 	    $factor = empty($targetConf['factor']) ? 1 : $targetConf['factor'];
 	    $from = empty($targetConf['from']) ? '-10min' : $targetConf['from'];
+		$imgFrom = empty($targetConf['image']['from']) ? '60min' : $targetConf['image']['from'];
+		$imgWidth = empty($targetConf['image']['width']) ? '100' : $targetConf['image']['width'];
+		$imgHeight = empty($targetConf['image']['height']) ? '56' : $targetConf['image']['height'];
 	    $until = 'now';
 	    $graphiteUrl = 'http://graphs.skybet.net';
 
-	    $t = time();
-	    $imageUrl = $graphiteUrl . "/render?from=-30min&until={$until}&target={$target}&width=100&height=40&bgcolor=282828&hideLegend=true&hideAxes=true&margin=0&t={$t}";
-	    $dataUrl = $graphiteUrl . "/render?from={$from}&until={$until}&target={$target}&format=json";
+		// backward compatibility
+		$imgFrom = preg_replace('/-?(.*)/', '$1', $imgFrom);
+
+		$t = time();
+		$imageUrl = $graphiteUrl . "/render?from=-{$imgFrom}&until={$until}&width={$imgWidth}&height={$imgHeight}&bgcolor=282828&hideLegend=true&hideAxes=true&margin=0&t={$t}";
+
+		$imgTargets = array();
+		$trgs = array();
+		if (!empty($targetConf['image']['targets'])) {
+			$imgTargets = $targetConf['image']['targets'];
+		} else {
+			$imgTargets[0] = $targetConf['image'];
+			$imgTargets[0]['target'] = $target;
+		}
+
+		foreach ($imgTargets as $trg) {
+			foreach ($trg as $func => $val) {
+				if (in_array($func, array('lineWidth', 'movingAverage'))) {
+					$trg['target'] = "{$func}({$trg['target']}%2C{$val})";
+				} else if (in_array($func, array('color'))) {
+					if ('color' == $func) {
+						$val = preg_replace('/#?(.*)/', '$1', $val);
+					}
+					$trg['target'] = "{$func}({$trg['target']}%2C'{$val}')";
+				}
+
+			}
+
+			if (!empty($targetConf['image']['bands'])) {
+				$trg['target'] = "color(movingAverage(holtWintersConfidenceBands({$trg['target']})%2C10)%2C'B5AB81')&target=lineWidth(color({$trg['target']}%2C'3366FF')%2C2)";
+			}
+
+			$trgs[] = 'target='.$trg['target'];
+		}
+		
+
+		$imageUrl .= '&' . implode('&', $trgs);
+		$dataUrl = $graphiteUrl . "/render?from={$from}&until={$until}&target={$target}&format=json";
 
 	    $jsonData = file_get_contents($dataUrl);
 	    if (empty($jsonData)) {
@@ -86,10 +128,11 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 	            'name' => $targetConf['label'],
 	            'avg' => $avg,
 	            'delta' => empty($delta) ? '' : $delta,
-	            'min' => $min,
-	            'max' => $max,
+	            'min' => round($min / $factor),
+	            'max' => round($max / $factor),
 	            'class' => $class,
 	            'img' => $imageUrl,
+	            'img-link' => isset($targetConf['image']['link']) ? $targetConf['image']['link'] : '',
 	    		'color' => $this->getColor($avg, $coldValue, $hotValue, $coldColor, $hotColor)
 	    );
 

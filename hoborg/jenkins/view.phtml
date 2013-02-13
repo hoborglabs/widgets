@@ -1,7 +1,7 @@
 <?php
-$p = $this->kernel->getConfig();
-$p = empty($p['public']) ? '' : $p['public'];
-
+//$p = $this->kernel->getConfig();
+//$p = empty($p['public']) ? '' : $p['public'];
+$p = '';
 function get_face($mood = 'positive') {
     $faces = array(
         'positive' => array('byebye', 'big_smile', 'haha', 'beauty', 'boss', 'feel_good'),
@@ -11,13 +11,14 @@ function get_face($mood = 'positive') {
     );
 
     srand(microtime(true)*1000000);
-    $basePath = '/styles/templates/hoborg/gfx/faces/';
+    $basePath = '/static/templates/hoborg/gfx/faces/';
     $randFaceIndex = rand(0, count($faces[$mood])-1);
 
     return $basePath . $faces[$mood][$randFaceIndex] . '.png';
 }
 ?>
 <?php foreach ($jobs as $job) : ?>
+    
     <?php
     if (0 === strpos($job['name'], 'release-')) { continue; }
     $extras = '';
@@ -60,7 +61,7 @@ function get_face($mood = 'positive') {
     }
     ?>
 
-    <div style="padding: 10px 0px; height: auto"
+    <div style="height: auto"
         class="panel build-<?php echo $mood; ?>"
     >
         <img src="<?php echo $p . get_face($mood); ?>" height="40" style="float:left; margin: 0px 10px 0px 5px;" />
