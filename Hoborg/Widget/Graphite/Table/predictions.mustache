@@ -1,0 +1,27 @@
+<div class="header">{{ name }}</div>
+<div class="body" style="padding: 5px 10px">
+{{#data.errors}}
+	<li>{{.}}</li>
+{{/data.errors}}
+
+<table>
+	<thead>
+		<tr>
+			<td></td>
+			<th>Prediction</th>
+			<th>Current</th>
+			<th>%</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#data.predictions}}
+		<tr>
+			<th>{{ name }}</th>
+			<td>{{ prediction }}</td>
+			<td>{{ current }}</td>
+			<td>{{ p }}%</td>
+		</tr>
+		{{/data.predictions}}
+	</tbody>
+</table>
+</div>

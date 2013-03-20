@@ -1,0 +1,12 @@
+<div class="header">
+{{name}}
+</div>
+<div class="body">
+<ul class="matrix two-col">
+{{#data.servers}}
+	<li style="color: {{ color }}">
+		<span class="text-M">{{ name }}</span> idle: {{ metrics.idle }}, user: {{ metrics.user}}, iowait: {{ metrics.iowait}}
+    </li>
+{{/data.servers}}
+</ul>
+</div>
