@@ -20,7 +20,10 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 			if (0 === strpos($tplName, 'horizontal')) {
 				$targetConf['image']['height'] = 36;
 			}
-			$targetStats[] = $this->processTarget($targetConf);
+			$p = $this->processTarget($targetConf);
+			if (null !== $p) {
+				$targetStats[] = $p;
+			}
 		}
 
 		ob_start();
@@ -41,6 +44,8 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 		$alertOnHoltWinters = isset($targetConf['alertOnHoltWinters']) ? $targetConf['alertOnHoltWinters'] : -1;
 		$decimals = empty($targetConf['decimals']) ? 0 : $targetConf['decimals'];
 
+		$hideBellow = !isset($targetConf['hideBellow']) ? false : $targetConf['hideBellow'];
+
 		$until = 'now';
 		$bgcolor = '282828';
 		$graphiteUrl = 'http://graphs.skybet.net';
@@ -50,7 +55,7 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 		if ($alertOnHoltWinters > -1) {
 			$alertDataUrl = $graphiteUrl . "/render?from=-60s&until={$until}"
 					. "&target=holtWintersAberration(keepLastValue({$target}))&format=json";
-			
+
 			// check if we should alert based on holt winters
 			$jsonData = file_get_contents($alertDataUrl);
 			$alerts = json_decode($jsonData, true);
@@ -138,7 +143,6 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 			} else {
 				$color = $this->getColor($avg, $rmmin, $rmin, $hotColor, $coldColor);
 			}
-// 			var_dump($targetConf['colors']['range'], $mmin, $min, $max, $mmax, $avg, $color);
 		} else {
 			$coldValue = empty($targetConf['colors']['cold']['value']) ? 0 : $targetConf['colors']['cold']['value'];
 			$hotValue = empty($targetConf['colors']['hot']['value']) ? 100 : $targetConf['colors']['hot']['value'];
@@ -146,6 +150,12 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 		}
 		if ($alertOnHoltWinters > -1 && $alertsAvg['min'] < -1 * $alertOnHoltWinters) {
 			$color = $hotColor;
+		}
+
+		if (false !== $hideBellow) {
+			if ($avg <= $hideBellow) {
+				return null;
+			}
 		}
 		
 		// backward compatibility
@@ -183,7 +193,7 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 			if (!empty($trg['bands'])) {
 				$c = !empty($trg['color']) ? $trg['color'] : '3366FF';
 				$bc = '0099ff';// $this->getColor(0, 0, 100, '000000', $c);
-				$trg['target'] = "color(movingAverage(holtWintersConfidenceBands({$origTarget})%2C10)%2C'{$bc}')&target={$trg['target']}";
+				$trg['target'] = "color(movingAverage(holtWintersConfidenceBands(keepLastValue({$origTarget}))%2C10)%2C'{$bc}')&target={$trg['target']}";
 			}
 		
 			if (!empty($trg['baseline'])) {
