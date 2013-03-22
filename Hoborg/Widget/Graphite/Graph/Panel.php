@@ -54,6 +54,12 @@ class Panel extends \Hoborg\Dashboard\Widget {
 			$imageUrl .= "&target={$target['target']}";
 		}
 
+		foreach ($conf['options'] as $opt => $val) {
+			if (in_array($opt, array('yMin', 'drawNullAsZero', 'areaMode', 'fontSize'))) {
+				$imageUrl .= "&{$opt}={$val}";
+			}
+		}
+
 		return $imageUrl;
 	}
 }
