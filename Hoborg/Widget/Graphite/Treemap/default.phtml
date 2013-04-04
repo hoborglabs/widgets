@@ -33,7 +33,7 @@ var div = d3.select("#panel").append("div")
       .style("background", function(d) { return d.name ? backgroundColor(d.name) : null; })
       .style("font-size", function(d) { return d.fontSize ? d.fontSize + 'px' : '14px'; })
       .style("line-height", function(d) { if (d.dy > 50 && d.dx > 100) { return Math.max(0, d.dy - 1) + 'px'; } else { return d.fontSize + 'px'; }})
-      .text(function(d) { return d.children ? null : d.name + ' : ' + Math.round(d.size); });
+      .text(function(d) { return d.children ? null : d.name + ' : ' + d.count });
 
 function position() {
   this.style("left", function(d) { return d.x + "px"; })

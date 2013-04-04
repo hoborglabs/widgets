@@ -55,9 +55,11 @@ class Treemap extends \Hoborg\Widget\Graphite\Graphite {
 			$size = $size / count($targetData['datapoints']);
 
 			if ($size > 0) {
+				$count = ceil($size);
+				$size = max(10, $size * 10);
 				$min = min($size, $min);
 				$max = max($max, $size);
-				$treemap['children'][] = array('name' => $name, 'size' => $size);
+				$treemap['children'][] = array('name' => $name, 'size' => $size, 'count' => $count);
 			} 
 		}
 		
