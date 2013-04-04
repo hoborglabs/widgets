@@ -28,6 +28,8 @@ class Predictions extends \Hoborg\Widget\Graphite\Graphite {
 		}
 
 		$data['predictions'] = $this->getPredictions($conf);
+		$data['id'] = $conf['id'];
+		$conf['width'] = empty($conf['width']) ? 500 : $conf['width'];
 
 		$this->data['template'] = file_get_contents(__DIR__ . "/{$tplName}.mustache");
 		$this->data['data'] = $data;
@@ -35,15 +37,26 @@ class Predictions extends \Hoborg\Widget\Graphite\Graphite {
 
 	protected function getPredictions(array $conf) {
 		$predictions = array();
+		$targets = array();
+		$predictionsMap = array();
 
+		// get all targets
 		foreach ($conf['predictions'] as $prediction) {
-			$current = $this->getAvgTargetValue($prediction['target'], $conf['graphiteUrl']);
+			$targets[] = $prediction['target'];
+			$predictionsMap[md5($prediction['target'])] = $prediction;
+		}
+
+		$data = $this->getTargetsStatisticalData($conf['graphiteUrl'], $targets);
+
+		foreach ($data as $index => $target) {
+			$prediction = $conf['predictions'][$index];
 
 			$predictions[] = array(
 				'name' => $prediction['name'],
-				'current' => round($current),
+				'current' => round($target['avg']),
+				'max' => round($target['max']),
 				'prediction' => $prediction['prediction'],
-				'p' => round(100 * $current / $prediction['prediction']),
+				'p' => round(100 * $target['avg'] / $prediction['prediction']),
 			);
 		}
 

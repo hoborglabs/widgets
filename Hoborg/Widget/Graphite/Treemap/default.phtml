@@ -1,0 +1,44 @@
+<div class="panel">
+	<div id="panel"></div>
+	<br />
+</div>
+
+<script>
+var margin = {top: 10, right: 10, bottom: 10, left: 10},
+    width = <?php echo $config['width']; ?> - margin.left - margin.right,
+    height = <?php echo $config['height']; ?> - margin.top - margin.bottom;
+
+var backgroundColor = d3.scale.category20c();
+var textColor = d3.scale.category20();
+
+var treemap = d3.layout.treemap()
+    .size([width, height])
+    .sticky(true)
+    .value(function(d) { return d.size; });
+
+var div = d3.select("#panel").append("div")
+    .style("position", "relative")
+    .style("overlay", "hidden")
+    .style("width", (width + margin.left + margin.right) + "px")
+    .style("height", (height + margin.top + margin.bottom) + "px")
+    .style("left", margin.left + "px")
+    .style("top", margin.top + "px");
+
+  var root = <?php echo json_encode($this->data['data']) ?>;
+  var node = div.datum(root).selectAll(".node")
+      .data(treemap.nodes)
+    .enter().append("div")
+      .attr("class", "node")
+      .call(position)
+      .style("background", function(d) { return d.name ? backgroundColor(d.name) : null; })
+      .style("font-size", function(d) { return d.fontSize ? d.fontSize + 'px' : '14px'; })
+      .style("line-height", function(d) { if (d.dy > 50 && d.dx > 100) { return Math.max(0, d.dy - 1) + 'px'; } else { return d.fontSize + 'px'; }})
+      .text(function(d) { return d.children ? null : d.name + ' : ' + Math.round(d.size); });
+
+function position() {
+  this.style("left", function(d) { return d.x + "px"; })
+      .style("top", function(d) { return d.y + "px"; })
+      .style("width", function(d) { return Math.max(0, d.dx - 6) + "px"; })
+      .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
+}
+</script>

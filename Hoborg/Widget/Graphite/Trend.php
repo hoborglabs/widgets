@@ -186,6 +186,10 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 						$val = preg_replace('/#?(.*)/', '$1', $val);
 					}
 					$trg['target'] = "{$func}({$trg['target']}%2C'{$val}')";
+				} else if (in_array($func, array('stacked'))) {
+					if (!empty($val)) {
+						$trg['target'] = "{$func}({$trg['target']})";
+					}
 				}
 		
 			}
@@ -206,15 +210,15 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 		$imageUrl .= '&' . implode('&', $trgs);
 
 		$targetConf += array(
-				'name' => $targetConf['label'],
-				'avg' => number_format($avg / $factor, $decimals),
-				'delta' => empty($delta) ? '' : $delta,
-				'min' => round($min / $factor),
-				'max' => round($max / $factor),
-				'class' => $class,
-				'img' => $imageUrl,
-				'img-link' => isset($targetConf['image']['link']) ? $targetConf['image']['link'] : '',
-				'color' => $color
+			'name' => $targetConf['label'],
+			'avg' => number_format($avg / $factor, $decimals),
+			'delta' => empty($delta) ? '' : $delta,
+			'min' => round($min / $factor),
+			'max' => round($max / $factor),
+			'class' => $class,
+			'img' => $imageUrl,
+			'img-link' => isset($targetConf['image']['link']) ? $targetConf['image']['link'] : '',
+			'color' => $color
 		);
 
 		return $targetConf;

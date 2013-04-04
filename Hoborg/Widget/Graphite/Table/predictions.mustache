@@ -3,7 +3,7 @@
 {{#data.errors}}
 	<li>{{.}}</li>
 {{/data.errors}}
-
+<!--
 <table>
 	<thead>
 		<tr>
@@ -24,4 +24,91 @@
 		{{/data.predictions}}
 	</tbody>
 </table>
+-->
 </div>
+
+<div id="{{ data.id }}">
+</div>
+
+<script>
+var data = [{{#data.predictions}}{ name: "{{ name }}", max: {{ max}}, current: {{ current }}, prediction: {{ prediction }}, p: {{ p }} },{{/data.predictions}}];
+
+var margin = {top: 30, right: 10, bottom: 10, left: 10},
+    paddingX = 200,
+    width = {{ conf.width }} - margin.left - margin.right,
+    height = 164 - margin.top - margin.bottom;
+
+var x = d3.scale.linear()
+    .domain([0, 1])
+    .range([paddingX, width])
+    .nice();
+
+var paddingY = height / data.length - 10;
+
+var y = d3.scale.ordinal()
+    .domain(d3.range(data.length))
+    .rangeRoundBands([0, height], .2);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("top")
+    .tickFormat(d3.format("%"));
+
+var svg = d3.select("#{{ data.id }}").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var bars = svg.selectAll(".bar")
+    .data(data);
+
+// Labels
+bars.enter()
+  .append("text")
+    .text(function(d) { return d.name + " [ " + d.prediction + " ]" })
+    .attr("class", "label")
+    .attr("x", function(d) { return 0; })
+    .attr("y", function(d, i) { return y(i) + paddingY; })
+    .attr("height", y.rangeBand());
+
+// current Value
+bars.enter()
+  .append("text")
+    .attr("class", "label")
+    .text(function(d) { return d.current })
+    .attr("text-anchor", "end")
+    .attr("x", paddingX - 6)
+    .attr("y", function(d, i) { return y(i) + paddingY; })
+    .attr("height", y.rangeBand());
+
+// local MAX values
+bars.enter()
+  .append("rect")
+    .attr("class", function(d) { return "bar positive"; })
+    .attr("x", function(d) { return x(0); })
+    .attr("y", function(d, i) { return y(i); })
+    .attr("width", function(d) { return x(d.max/d.prediction) - paddingX; })
+    .attr("height", y.rangeBand())
+    .style("opacity", function(d) { return 0.3});
+
+bars.enter()
+  .append("rect")
+    .attr("class", function(d) { return d.p < 0 ? "bar negative" : "bar positive"; })
+    .attr("x", function(d) { return x(0); })
+    .attr("y", function(d, i) { return y(i); })
+    .attr("width", function(d) { return x(d.p/100) - paddingX; })
+    .attr("height", y.rangeBand());
+
+svg.append("g")
+    .attr("class", "x axis")
+    .call(xAxis);
+
+svg.append("g")
+    .attr("class", "y axis")
+  .append("line")
+    .attr("x1", x(0))
+    .attr("x2", x(0))
+    .attr("y1", 0)
+    .attr("y2", height);
+</script>
