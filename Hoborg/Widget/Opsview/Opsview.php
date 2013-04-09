@@ -20,8 +20,11 @@ class Opsview extends Widget {
 			return null;
 		}
 
-		$config = $this->getData('config', array());
 		$access = $this->getAccessData();
+		if (empty($this->accessData)) {
+			return null;
+		}
+
 		$getQuery = array();
 		foreach ($params as $k => $v) {
 			if (is_array($v)) {
@@ -35,11 +38,11 @@ class Opsview extends Widget {
 
 		// set content type
 		$contentType = 'application/json';
-		if ('perl' == $type) {
-			$contentType = 'text/x-data-dumper';
-		} else if ('xml' == $type) {
-			$contentType = 'text/xml';
-		}
+// 		if ('perl' == $type) {
+// 			$contentType = 'text/x-data-dumper';
+// 		} else if ('xml' == $type) {
+// 			$contentType = 'text/xml';
+// 		}
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $this->opsviewUrl . $endpoint . '?' . implode('&', $getQuery));
