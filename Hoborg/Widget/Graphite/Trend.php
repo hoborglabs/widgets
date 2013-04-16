@@ -163,7 +163,10 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 		
 		$t = time();
 		$imageUrl = $graphiteUrl . "/render?from=-{$imgFrom}&until={$until}&width={$imgWidth}&height={$imgHeight}&bgcolor={$bgcolor}&hideLegend=true&hideAxes=true&margin=0&t={$t}&yMin=0";
-		
+		if (!empty($targetConf['image']['drawNullAsZero'])) {
+			$imageUrl .= "&drawNullAsZero=true";
+		}
+
 		$imgTargets = array();
 		$trgs = array();
 		if (!empty($targetConf['image']['targets'])) {
@@ -172,7 +175,7 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 			$imgTargets[0] = $targetConf['image'];
 			$imgTargets[0]['target'] = $target;
 		}
-		
+
 		foreach ($imgTargets as $trg) {
 			$origTarget = $trg['target'];
 			if (empty($trg['color'])) {
@@ -193,7 +196,7 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 				}
 		
 			}
-		
+
 			if (!empty($trg['bands'])) {
 				$c = !empty($trg['color']) ? $trg['color'] : '3366FF';
 				$bc = '0099ff';// $this->getColor(0, 0, 100, '000000', $c);
@@ -203,10 +206,10 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 			if (!empty($trg['baseline'])) {
 				$trg['target'] = "color(constantLine({$trg['baseline']})%2C'{$bgcolor}')&target={$trg['target']}";
 			}
-		
+
 			$trgs[] = 'target='.$trg['target'];
 		}
-		
+
 		$imageUrl .= '&' . implode('&', $trgs);
 
 		$targetConf += array(

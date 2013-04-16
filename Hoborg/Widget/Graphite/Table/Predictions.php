@@ -30,6 +30,7 @@ class Predictions extends \Hoborg\Widget\Graphite\Graphite {
 		$data['predictions'] = $this->getPredictions($conf);
 		$data['id'] = $conf['id'];
 		$conf['width'] = empty($conf['width']) ? 500 : $conf['width'];
+		$conf['height'] = empty($conf['height']) ? 200 : $conf['height'];
 
 		$this->data['template'] = file_get_contents(__DIR__ . "/{$tplName}.mustache");
 		$this->data['data'] = $data;

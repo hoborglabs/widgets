@@ -36,7 +36,7 @@ var data = [{{#data.predictions}}{ name: "{{ name }}", max: {{ max}}, current: {
 var margin = {top: 30, right: 10, bottom: 10, left: 10},
     paddingX = 200,
     width = {{ conf.width }} - margin.left - margin.right,
-    height = 164 - margin.top - margin.bottom;
+    height = {{ conf.height }} - margin.top - margin.bottom;
 
 var x = d3.scale.linear()
     .domain([0, 1])
