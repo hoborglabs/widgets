@@ -57,15 +57,15 @@ var servers = svg.selectAll(".server")
 servers.enter()
   .append("circle")
     .style("fill", function(d) { return color(d.type); })
-    .attr("r", function(d) { return Math.max(5, d.vector[2]/3); })
+    .attr("r", function(d) { return Math.max(3, d.vector[2]/3); })
     .attr("cx", function(d) { return x(d.vector[0]); })
     .attr("cy", function(d) { return y(d.vector[1]); })
     .style("opacity", 0.5);
 
 labels = [
-  {name: "user", vector: [0, 100]},
-  {name: "system", vector: [85, -57]},
-  {name: "iowait", vector: [-85, -57]},
+  {name: "user", vector: [0, 100], anchor: "middle"},
+  {name: "system", vector: [90, -60], anchor: "end"},
+  {name: "iowait", vector: [-90, -60], anchor: "start"},
 ];
 
 var lab = svg.selectAll(".labels")
@@ -74,7 +74,7 @@ lab.enter()
   .append("text")
     .text(function(d) { return d.name })
     .attr("class", "label")
-    .attr("text-anchor", "middle")
+    .attr("text-anchor", function(d) { return d.anchor })
     .attr("x", function(d) { return x(d.vector[0]); })
     .attr("y", function(d) { return y(d.vector[1]); });
 
