@@ -49,6 +49,11 @@ class Panel extends \Hoborg\Dashboard\Widget {
 					$target['target'] = "{$func}({$target['target']}%2C'{$val}')";
 				} else if (in_array($func, array('scale', 'movingAverage', 'highestAverage', 'lineWidth'))) {
 					$target['target'] = "{$func}({$target['target']}%2C{$val})";
+				} else if (in_array($func, array('drawAsInfinite', 'stacked'))) {
+					// no params functions
+					if (!empty($val)) {
+						$target['target'] = "{$func}({$target['target']})";
+					}
 				}
 			}
 			$imageUrl .= "&target={$target['target']}";

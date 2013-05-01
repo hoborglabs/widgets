@@ -1,0 +1,48 @@
+<div class="header">{{ name }}</div>
+<div class="body" style="padding: 5px 10px">
+{{#data.errors}}
+	<li>{{.}}</li>
+{{/data.errors}}
+
+<table class="panel">
+	<thead>
+		<tr>
+			<th></th>
+			{{#data.columns}}
+				<th style="width: {{width}}px">{{ name }}</th>
+			{{/data.columns}}
+		</tr>
+	</thead>
+	<tbody>
+		{{#data.rows}}
+		<tr>
+			<th>
+				{{ label.name }}<br />
+				{{#label.normalization}}
+				<svg width="100%" height="14" style="margin: 6px 0 0 0;">
+					<rect class="bar positive" style="opacity: 0.2" x="0" y="0" width="{{ bar.cmax }}%" height="14"></rect>
+					<rect class="bar positive" x="0" y="4" width="{{ bar.avg }}%" height="6"></rect>
+
+					<rect class="bar" x="{{ bar.min }}%" y="0" width="2" height="22" style="fill: #AAA"></rect>
+					<rect class="bar" x="{{ bar.max }}%" y="0" width="2" height="22" style="fill: #AAA"></rect>
+				</svg>
+				{{/label.normalization}}
+			</th>
+			{{#trends}}
+				<td style="padding-left: 16px;">
+					<span class="text-L" style="color: #{{ img.color }}">{{ avg-disp }}</span><img
+						src="{{ img.src }}"
+						width="{{ img.width }}"
+						height="{{ img.height }}"
+						style="display: inline-block; float: right; vertical-align: text-bottom;"
+						align="middle"
+					/><br />
+					<span style="display: inline-block; color: #{{ img.color }}">max: {{ max-disp }}, min: {{ min-disp }}</span>
+				</td>
+			{{/trends}}
+		</tr>
+		{{/data.rows}}
+	</tbody>
+</table>
+
+</div>
