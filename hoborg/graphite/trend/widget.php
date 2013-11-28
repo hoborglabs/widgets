@@ -39,13 +39,14 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 		$imgWidth = empty($targetConf['image']['width']) ? '100' : $targetConf['image']['width'];
 		$imgHeight = empty($targetConf['image']['height']) ? '56' : $targetConf['image']['height'];
 	    $until = 'now';
+	    $bgcolor = '282828';
 	    $graphiteUrl = 'http://graphs.skybet.net';
 
 		// backward compatibility
 		$imgFrom = preg_replace('/-?(.*)/', '$1', $imgFrom);
 
 		$t = time();
-		$imageUrl = $graphiteUrl . "/render?from=-{$imgFrom}&until={$until}&width={$imgWidth}&height={$imgHeight}&bgcolor=282828&hideLegend=true&hideAxes=true&margin=0&t={$t}";
+		$imageUrl = $graphiteUrl . "/render?from=-{$imgFrom}&until={$until}&width={$imgWidth}&height={$imgHeight}&bgcolor={$bgcolor}&hideLegend=true&hideAxes=true&margin=0&t={$t}";
 
 		$imgTargets = array();
 		$trgs = array();
@@ -69,8 +70,12 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 
 			}
 
-			if (!empty($targetConf['image']['bands'])) {
+			if (!empty($trg['bands'])) {
 				$trg['target'] = "color(movingAverage(holtWintersConfidenceBands({$trg['target']})%2C10)%2C'B5AB81')&target=lineWidth(color({$trg['target']}%2C'3366FF')%2C2)";
+			}
+			
+			if (!empty($trg['baseline'])) {
+				$trg['target'] = "color(constantLine({$trg['baseline']})%2C'{$bgcolor}')&target={$trg['target']}";
 			}
 
 			$trgs[] = 'target='.$trg['target'];
@@ -119,7 +124,7 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 	    }
 	    $class = "text-S icon {$class}";
 
-	    $coldColor = empty($targetConf['colors']['cold']['color']) ? 'FFFFFF' : $targetConf['colors']['cold']['color'];
+	    $coldColor = empty($targetConf['colors']['cold']['color']) ? '070707' : $targetConf['colors']['cold']['color'];
 	    $coldValue = empty($targetConf['colors']['cold']['value']) ? 0 : $targetConf['colors']['cold']['value'];
 	    $hotColor = empty($targetConf['colors']['hot']['color']) ? 'FF0000' : $targetConf['colors']['hot']['color'];
 	    $hotValue = empty($targetConf['colors']['hot']['value']) ? 100 : $targetConf['colors']['hot']['value'];

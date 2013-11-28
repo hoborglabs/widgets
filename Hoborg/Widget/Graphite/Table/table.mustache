@@ -30,6 +30,7 @@
 			</th>
 			{{#trends}}
 				<td style="padding-left: 16px;">
+					{{^empty}}
 					<span class="text-L" style="color: #{{ img.color }}">{{ avg-disp }}</span><img
 						src="{{ img.src }}"
 						width="{{ img.width }}"
@@ -38,6 +39,7 @@
 						align="middle"
 					/><br />
 					<span style="display: inline-block; color: #{{ img.color }}">max: {{ max-disp }}, min: {{ min-disp }}</span>
+					{{/empty}}
 				</td>
 			{{/trends}}
 		</tr>

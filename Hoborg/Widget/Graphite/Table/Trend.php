@@ -67,7 +67,7 @@ use Hoborg\Widget\Graphite\Graphite;
 class Trend extends Graphite {
 
 	public function bootstrap() {
-		$config = $this->getData('config', array());
+		$config = $this->get('config', array());
 		$data = array(
 			'columns' => array(),
 			'rows' => array(),
@@ -117,12 +117,15 @@ class Trend extends Graphite {
 	protected function getRowsNormalization(array $rows) {
 		$normalizations = array();
 		$targets = array();
-		$config = $this->getData('config', array());
+		$config = $this->get('config', array());
 
 		foreach ($rows as $row) {
 			$label = array_shift($row);
 			if (empty($label['_normalization'])) {
-				$normalizations[] = null;
+				$normalizations[] = array(
+					'target' => '1',
+					'range' => array(0, 0, 2, 2)
+				);
 				continue;
 			}
 
@@ -202,6 +205,7 @@ class Trend extends Graphite {
 				$trend['min-disp'] = ($trend['min'] >=10 || $trend['min'] == 0) ? round($trend['min']) : number_format($trend['min'], 1);
 
 				$trend['img'] = $this->getImageData($targets[$rowIndex], $trend);
+				$trend['empty'] = !empty($targets[$rowIndex]['empty']);
 
 				$rows[$rowIndex]['trends'][$colIndex] = $trend;
 			}
@@ -211,7 +215,7 @@ class Trend extends Graphite {
 	}
 
 	protected function processColumnTargets(array $columnTargets) {
-		$config = $this->getData('config', array());
+		$config = $this->get('config', array());
 		$data = array();
 
 		// common params
@@ -227,7 +231,7 @@ class Trend extends Graphite {
 	}
 	
 	protected function getImageData(array $targetConfig, array $targetData) {
-		$config = $this->getData('config', array());
+		$config = $this->get('config', array());
 		$img = array(
 			'src' => '',
 			'width' => $targetConfig['image']['width'],

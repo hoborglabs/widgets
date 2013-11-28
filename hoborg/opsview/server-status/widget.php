@@ -10,6 +10,9 @@ class OpsViewServerStatusWidget extends \Hoborg\Dashboard\Widget {
 		$config = $this->getData('config', array());
 
 		$data = $this->getOpsViewData();
+		if (empty($data['list'])) {
+			return;
+		}
 		$upServers = $deadServers = $servers = array();
 		foreach ($data['list'] as $srv) {
 			if ('up' !=$srv['state']) {
@@ -101,7 +104,9 @@ class OpsViewServerStatusWidget extends \Hoborg\Dashboard\Widget {
 		$result = curl_exec($curl);
 		$loginData = json_decode($result, true);
 		curl_close($curl);
-
+		if (empty($loginData['token'])) {
+			return array();
+		}
 
 		$getQuery = array();
 		foreach ($config['params'] as $k => $v) {

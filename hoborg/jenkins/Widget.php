@@ -5,6 +5,7 @@ class Widget extends \Hoborg\Dashboard\Widget {
 
 	public function bootstrap() {
 		$widget = $this->data;
+		$config = $this->getData('conf', array());
 
 		// main check for data file.
 		if (empty($widget['conf']['jenkins-url'])) {
@@ -14,75 +15,89 @@ class Widget extends \Hoborg\Dashboard\Widget {
 		}
 		$jenkinsUrl = $widget['conf']['jenkins-url'];
 		$excludedJobs = isset($widget['conf']['exclude']) ? $widget['conf']['exclude'] : array();
+		$includeJobs = isset($widget['conf']['include']) ? $widget['conf']['include'] : array();
 
 		$jobs = $this->execute(array(
-			'url' => $jenkinsUrl,
+				'url' => $jenkinsUrl,
 		));
 		$jobs = $jobs['jobs'];
 
-		$jobs = $this->filter($jobs, $excludedJobs);
+		$jobs = $this->filter($jobs, $includeJobs, $excludedJobs);
 
+		$view = empty($config['view']) ? 'view' : $config['view'];
 		ob_start();
-		include __DIR__ . '/view.phtml';
+		include __DIR__ . "/{$view}.phtml";
 		$widget['body'] = ob_get_clean();
 
 		$this->data = $widget;
 	}
 
-        public function execute($params) {
-                $defaults = array(
-                        'url' => null,
-                );
-                $options = $params + $defaults;
+	public function execute($params) {
+		$defaults = array(
+				'url' => null,
+		);
+		$options = $params + $defaults;
 
-                $tree = array(
-                        'jobs' => array(
-                                'name',
-                                'id',
-                                'color',
-                                'inQueue',
-                                'lastBuild' => array(
-                                        'number',
-                                        'timestamp',
-                                        'result',
-                                        'url',
-                                        'building',
-                                ),
-                                'healthReport' => array('score', 'description'),
-                        )
-                );
-                $url = $options['url'] . '/api/json?tree=';
-                $url .= urlencode($this->get_tree_value($tree));
+		$tree = array(
+				'jobs' => array(
+						'name',
+						'id',
+						'color',
+						'inQueue',
+						'lastBuild' => array(
+								'number',
+								'timestamp',
+								'result',
+								'url',
+								'building',
+						),
+						'healthReport' => array('score', 'description'),
+				)
+		);
+		$url = $options['url'] . '/api/json?tree=';
+		$url .= urlencode($this->get_tree_value($tree));
 
-                // get data from url
-                $data = file_get_contents($url);
-                if (empty($data)) {
-                        die('no Data returned from ' . $url);
-                }
+		// get data from url
+		$data = file_get_contents($url);
+		if (empty($data)) {
+			die('no Data returned from ' . $url);
+		}
 
-                return json_decode($data, true);
-        }
+		return json_decode($data, true);
+	}
 
-        public function get_tree_value(array $tree) {
-                $value = '';
+	public function get_tree_value(array $tree) {
+		$value = '';
 
-                foreach ($tree as $key => $val) {
-                        if (is_array($val)) {
-                                $value .= ','.$key.'['. $this->get_tree_value($val) . ']';
-                        } else {
-                                $value .= ','.$val;
-                        }
-                }
-
-                return substr($value, 1);
-        }
-
-	protected function filter(array $jobs, array $exclude) {
-		foreach ($jobs as $i => $job) {
-			if (in_array($job['name'], $exclude)) {
-				unset($jobs[$i]);
+		foreach ($tree as $key => $val) {
+			if (is_array($val)) {
+				$value .= ','.$key.'['. $this->get_tree_value($val) . ']';
+			} else {
+				$value .= ','.$val;
 			}
 		}
+
+		return substr($value, 1);
+	}
+
+	protected function filter(array $jobs, array $include, array $exclude) {
+		if (!empty($include)) {
+			foreach ($jobs as $i => $job) {
+				if (!in_array($job['name'], $include)) {
+					unset($jobs[$i]);
+				}
+			}
+		}
+
+		if (!empty($exclude)) {
+			foreach ($jobs as $i => $job) {
+				if (in_array($job['name'], $exclude)) {
+					unset($jobs[$i]);
+				}
+			}
+		}
+
 		return $jobs;
 	}
+
 }
