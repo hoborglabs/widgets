@@ -1,8 +1,0 @@
-<?php
-if (empty($servers)) {
-	return;
-}
-?>
-<?php foreach ($servers as $server) : ?>
-    <?php echo $server['name']?> (<?php echo $server['state']?>),
-<?php endforeach; ?>
