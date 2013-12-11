@@ -5,7 +5,7 @@ class Widget extends \Hoborg\Dashboard\Widget {
 
 	public function bootstrap() {
 		$widget = $this->data;
-		$config = $this->getData('conf', array());
+		$config = $this->get('conf', array());
 
 		// main check for data file.
 		if (empty($widget['conf']['jenkins-url'])) {
@@ -39,20 +39,20 @@ class Widget extends \Hoborg\Dashboard\Widget {
 		$options = $params + $defaults;
 
 		$tree = array(
-				'jobs' => array(
-						'name',
-						'id',
-						'color',
-						'inQueue',
-						'lastBuild' => array(
-								'number',
-								'timestamp',
-								'result',
-								'url',
-								'building',
-						),
-						'healthReport' => array('score', 'description'),
-				)
+			'jobs' => array(
+				'name',
+				'id',
+				'color',
+				'inQueue',
+				'lastBuild' => array(
+					'number',
+					'timestamp',
+					'result',
+					'url',
+					'building',
+				),
+				'healthReport' => array('score', 'description'),
+			)
 		);
 		$url = $options['url'] . '/api/json?tree=';
 		$url .= urlencode($this->get_tree_value($tree));

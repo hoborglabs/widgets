@@ -1,0 +1,29 @@
+<div class="widget-header">
+	{{name}} - build {{data.build}}
+</div>
+<div class="body">
+	<svg id="graph1" />
+	{{#data.shame}}<h3>Oh no, check these packages</h3>{{/data.shame}}
+	{{^data.shame}}<h3>Code Coverage Joy!</h3>{{/data.shame}}
+	{{#data.shame}}
+		<div class="panel">
+			<span class="text-M">{{name}}</span>, total: {{score}}%
+		</div>
+	{{/data.shame}}
+</div>
+<style>
+.bar {
+	opacity: .5;
+}
+.path {
+  fill: none;
+  stroke: black;
+  stroke-width: 2.5px;
+}
+</style>
+<div class="js-config"
+	data-width="510"
+	data-height="110"
+	data-svgid="graph1"
+	data-graph="{{data.graph}}"
+/>

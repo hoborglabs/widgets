@@ -2,5 +2,11 @@
 	{{name}}
 </div>
 <div class="body">
-	
+	{{#data.modules}}
+		<div class="panel">{{name}}
+		{{#elements}}
+			{{name}}:{{ratio}}, 
+		{{/elements}}
+		</div>
+	{{/data.modules}}
 </div>

@@ -1,0 +1,11 @@
+<div class="widget-header">
+	{{name}}
+</div>
+<div class="body">
+	<h3>New Versions</h3>
+	{{#data.repositories}}
+		<div class="panel">
+			{{text}}
+		</div>
+	{{/data.repositories}}
+</div>
