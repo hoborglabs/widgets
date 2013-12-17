@@ -1,6 +1,7 @@
 require([
-	'hoborglabs/widget'
-], function(HoborglabsWidget){
+	'hoborglabs/widget',
+	'lib/bonzo',
+], function(HoborglabsWidget, Bonzo){
 
 	function LatestVersion() {
 		HoborglabsWidget.apply(this, arguments);
@@ -18,14 +19,14 @@ require([
 					name: "button",
 					id: "btn1",
 					config: {
-						text: ["Show Details", "Hide Details"],
+						text: ["Show Todys Details", "Hide Todays Details"],
 					}
 				},
 				{
 					name: "button",
 					id: "btn2",
 					config: {
-						text: ["Show Details", "Hide Details"],
+						text: ["Show This Week Details", "Hide Show This Week Details"],
 					}
 				}
 			]
@@ -35,9 +36,13 @@ require([
 	LatestVersion.prototype.remoteCommand = function(data) {
 		// check data.element
 		if (data.element.id == 'btn1') {
-
-		} else if (data.element.id == 'btn1') {
-
+			this.el.toggleClass('widget--hidden');
+		} else if (data.element.id == 'btn2') {
+			this.el.toggleClass('span8');
+			this.el.toggleClass('span20');
+			Bonzo(this.widget.get(0).getElementsByClassName('js-details')[0]).toggle();
+			Bonzo(this.widget.get(0).getElementsByClassName('js-basic')[0]).toggle();
+			Bonzo(this.widget.get(0).getElementsByClassName('js-basic')[1]).toggle();
 		}
 	};
 

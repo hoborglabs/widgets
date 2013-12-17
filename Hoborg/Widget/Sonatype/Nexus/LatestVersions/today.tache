@@ -1,0 +1,16 @@
+<div class="widget-header">
+	{{name}}
+</div>
+<div class="widget__body widget__body--box">
+	<div class="widget__body--content">
+		{{^data.repositories.noToday}}<h3 class="widget--island">Today's New Versions</h3>{{/data.repositories.noToday}}
+		{{#data.repositories.noToday}}<h3 class="widget--island">No New Version</h3>{{/data.repositories.noToday}}
+		<div class="js-basic">
+		{{#data.repositories.today}}
+			<div class="panel ">
+				<span class="text-success text-M">{{text}}<br />{{version.text}}</span>
+			</div>
+		{{/data.repositories.today}}
+		</div>
+	</div>
+</div>

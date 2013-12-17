@@ -1,11 +1,35 @@
 <div class="widget-header">
 	{{name}}
 </div>
-<div class="body">
-	<h3>New Versions</h3>
-	{{#data.repositories}}
-		<div class="panel">
-			{{text}}
+<div class="widget__body widget__body--box">
+	<div class="widget__body--content">
+		{{^data.repositories.noToday}}<h3 class="widget--island">Today's New Versions</h3>{{/data.repositories.noToday}}
+		<div class="js-basic">
+		{{#data.repositories.today}}
+			<div class="panel ">
+				<span class="text-success text-M">{{text}}<br />{{version.text}}</span>
+			</div>
+		{{/data.repositories.today}}
 		</div>
-	{{/data.repositories}}
+	
+		{{^data.repositories.noLastWeek}}<h3 class="widget--island">Last Week Versions</h3>{{/data.repositories.noLastWeek}}
+		<div class="js-basic">
+		{{#data.repositories.lastWeek}}
+			<div class="panel text-info text-M">
+				{{text}}<br />{{version.text}}
+			</div>
+		{{/data.repositories.lastWeek}}
+		</div>
+	
+		<ul style="display: none" class="matrix three-col js-details">
+			{{#data.repositories.lastWeek}}
+			<li class="panel">
+				{{text}} - {{#version}}{{text}}{{/version}}
+				<ul>
+				{{#oldVersions}}<li>{{text}}</li>{{/oldVersions}}
+				</ul>
+			</li>
+		{{/data.repositories.lastWeek}}
+		</ul>
+	</div>
 </div>

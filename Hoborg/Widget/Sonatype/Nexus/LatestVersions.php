@@ -22,23 +22,49 @@ class LatestVersions extends \Hoborg\Dashboard\Widget  {
 
 	protected function getLatestVersions() {
 		$cfg = $this->get('config', array());
-		$repos = array();
+		$repos = array(
+			'today' => array(),
+			'lastWeek' => array(),
+		);
 
 		$baseUrl = $cfg['url'] . '/service/local/repositories/';
 		$now = time();
 
+		$today = time() - strtotime('today');
+		$lastWeek = time() - strtotime('-1 week');
+
 		foreach ($cfg['repositories'] as $repo) {
 			$data = $this->jsonRequest($baseUrl.$repo);
-			error_log(__METHOD__ . ' url ' .$baseUrl.$repo .' data ' . var_export($data, true));
 
 			foreach ($data['data'] as $repository) {
+
 				$lastModified = strtotime($repository['lastModified']);
-				error_log(__METHOD__ . ' mod ' . $repository['text'] . ' diff' . ($now - $lastModified));
-				if ($now - $lastModified < 3600) {
-					$repos[] = $repository;
+				if ($now - $lastModified < $lastWeek) {
+					// get versions info
+					$repoData = $this->jsonRequest($repository['resourceURI']);
+					$versions = array_filter($repoData['data'], function($a) { return !$a['leaf']; });
+					usort($versions, function($a, $b) {
+						return strtotime($b['lastModified']) -  strtotime($a['lastModified']);
+					});
+
+					// versions is an array of arrays = splice will give you array with one array
+					$repository['version'] = array_splice($versions, 0, 1);
+					$repository['version'] = $repository['version'][0];
+
+					// save all other versions
+					$repository['oldVersions'] = array_splice($versions, 1, 10);
+
+					if ($now - $lastModified < $today) {
+						$repos['today'][] = $repository;
+					} else {
+						$repos['lastWeek'][] = $repository;
+					}
 				}
 			}
 		}
+
+		$repos['noToday'] = empty($repos['today']);
+		$repos['noLastWeek'] = empty($repos['lastWeek']);
 
 		return $repos;
 	}

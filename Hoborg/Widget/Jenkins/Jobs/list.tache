@@ -1,0 +1,17 @@
+<div class="widget-header">
+{{name}}
+</div>
+<div class="widget__body widget__body--box">
+	<div class="widget__body--content">
+		{{^data.hasWarning}}<h2 class="widget--island">No Broken Builds!</h2>{{/data.hasWarning}}
+		{{#data.hasWarning}}<h2 class="widget--island">Broken Builds:</h2>{{/data.hasWarning}}
+		<ul class="matrix one-col">
+		{{#data.warning}}
+			<li class="panel">
+				<a class="text-L text-danger" href="{{url}}">{{text}} [#{{number}}]</a>
+				{{#extras}}<br />{{extras}}{{/extras}}
+			</li>
+		{{/data.warning}}
+		</ul>
+	</div>
+</div>
