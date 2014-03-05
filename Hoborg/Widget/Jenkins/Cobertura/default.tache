@@ -1,12 +1,12 @@
-<div class="header">
+<div class="widget-header">
 	{{name}}
 </div>
-<div class="body">
-	{{#data.modules}}
-		<div class="panel">{{name}}
-		{{#elements}}
-			{{name}}:{{ratio}}, 
-		{{/elements}}
-		</div>
-	{{/data.modules}}
+<div class="widget__body widget__body--box">
+	<ul class="matrix {{config.viewOptions.columns}}">
+	{{#data.jobs}}
+		<li class="panel text-M {{class}}">
+			{{coverageText}} <a class="{{class}}" href="{{url}}">{{text}}</a>
+		</li>
+	{{/data.jobs}}
+	</ul>
 </div>
