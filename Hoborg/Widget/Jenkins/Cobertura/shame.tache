@@ -1,17 +1,12 @@
 <div class="widget-header">
 	{{name}}
 </div>
-<div class="widget__body">
-	<h2 class="widget--island">Please fix me!</h2>
+<div class="widget__body widget__body--box">
+	<ul class="matrix {{config.viewOptions.columns}}">
 	{{#data.shame}}
-		<div class="panel">
-			<a class="text-M {{class}}" href="{{url}}">{{text}} total: {{coverageText}}</a>
-		</div>
+		<li class="panel text-M {{class}}">
+			{{coverageText}} <a class="{{class}}" href="{{url}}">{{text}}</a>
+		</li>
 	{{/data.shame}}
-
-	{{#data.jobs}}
-		<div class="panel" style="display: none">
-			<span class="text-M">{{text}}</span>, total: {{coverageText}}
-		</div>
-	{{/data.jobs}}
+	</ul>
 </div>
