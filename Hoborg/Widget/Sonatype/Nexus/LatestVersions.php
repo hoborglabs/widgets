@@ -63,6 +63,11 @@ class LatestVersions extends \Hoborg\Dashboard\Widget  {
 			}
 		}
 
+		$limit = 5;
+		array_splice($repos['today'], $limit);
+		$limit -= count($repos['today']);
+		array_splice($repos['lastWeek'], $limit);
+
 		$repos['noToday'] = empty($repos['today']);
 		$repos['noLastWeek'] = empty($repos['lastWeek']);
 

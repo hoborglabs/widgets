@@ -2,11 +2,13 @@
 	{{name}}
 </div>
 <div class="widget__body widget__body--box">
-	<ul class="matrix {{config.viewOptions.columns}}">
-	{{#data.shame}}
-		<li class="panel text-M {{class}}">
-			{{coverageText}} <a class="{{class}}" href="{{url}}">{{text}}</a>
-		</li>
-	{{/data.shame}}
-	</ul>
+	<div class="widget__body--content">
+		<ul class="matrix {{config.viewOptions.columns}}">
+		{{#data.shame}}
+			<li class="panel text-M {{class}}">
+				{{coverageText}} <a class="{{class}}" href="{{url}}">{{text}}</a>
+			</li>
+		{{/data.shame}}
+		</ul>
+	</div>
 </div>

@@ -4,9 +4,10 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 
 	public function bootstrap() {
 		$widget = $this->data;
+		$config = $this->get('config', array());
 
 		// main check for data file.
-		if (empty($widget['conf']['targets'])) {
+		if (empty($config['targets'])) {
 			$widget['body'] = 'Missing or empty data configuration `widget.conf.targets`';
 			$widget['error'] = 'Missing or empty data configuration `widget.conf.targets`';
 
@@ -14,13 +15,15 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 			return;
 		}
 
-		$tplName = empty($widget['conf']['view']) ? 'view' : $widget['conf']['view'];
+		$tplName = empty($config['view']) ? 'view' : $config['view'];
 		$targetStats = array();
-		foreach ($widget['conf']['targets'] as $targetConf) {
+		$defaultTarget = empty($config['targetsDefault']) ? array() : $config['targetsDefault'];
+		$this->graphiteUrl = $config['url'];
+		foreach ($config['targets'] as $targetConf) {
 			if (0 === strpos($tplName, 'horizontal')) {
 				$targetConf['image']['height'] = 36;
 			}
-			$p = $this->processTarget($targetConf);
+			$p = $this->processTarget($defaultTarget + $targetConf);
 			if (null !== $p) {
 				$targetStats[] = $p;
 			}
@@ -48,12 +51,11 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 
 		$until = 'now';
 		$bgcolor = '282828';
-		$graphiteUrl = 'http://graphs.skybet.net';
 
-		$dataUrl = $graphiteUrl . "/render?from={$from}&until={$until}&target={$target}&format=json";
-		
+		$dataUrl = $this->graphiteUrl . "/render?from={$from}&until={$until}&target={$target}&format=json";
+
 		if ($alertOnHoltWinters > -1) {
-			$alertDataUrl = $graphiteUrl . "/render?from=-60s&until={$until}"
+			$alertDataUrl = $this->graphiteUrl . "/render?from=-60s&until={$until}"
 					. "&target=holtWintersAberration(keepLastValue({$target}))&format=json";
 
 			// check if we should alert based on holt winters
@@ -157,12 +159,12 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 				return null;
 			}
 		}
-		
+
 		// backward compatibility
 		$imgFrom = preg_replace('/-?(.*)/', '$1', $imgFrom);
-		
+
 		$t = time();
-		$imageUrl = $graphiteUrl . "/render?from=-{$imgFrom}&until={$until}&width={$imgWidth}&height={$imgHeight}&bgcolor={$bgcolor}&hideLegend=true&hideAxes=true&margin=0&t={$t}&yMin=0";
+		$imageUrl = $this->graphiteUrl . "/render?from=-{$imgFrom}&until={$until}&width={$imgWidth}&height={$imgHeight}&bgcolor={$bgcolor}&hideLegend=true&hideAxes=true&margin=0&t={$t}&yMin=0";
 		if (!empty($targetConf['image']['drawNullAsZero'])) {
 			$imageUrl .= "&drawNullAsZero=true";
 		}
@@ -189,12 +191,11 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 						$val = preg_replace('/#?(.*)/', '$1', $val);
 					}
 					$trg['target'] = "{$func}({$trg['target']}%2C'{$val}')";
-				} else if (in_array($func, array('stacked'))) {
+				} else if (in_array($func, array('stacked', 'keepLastValue'))) {
 					if (!empty($val)) {
 						$trg['target'] = "{$func}({$trg['target']})";
 					}
 				}
-		
 			}
 
 			if (!empty($trg['bands'])) {
@@ -202,7 +203,7 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 				$bc = '0099ff';// $this->getColor(0, 0, 100, '000000', $c);
 				$trg['target'] = "color(movingAverage(holtWintersConfidenceBands(keepLastValue({$origTarget}))%2C10)%2C'{$bc}')&target={$trg['target']}";
 			}
-		
+
 			if (!empty($trg['baseline'])) {
 				$trg['target'] = "color(constantLine({$trg['baseline']})%2C'{$bgcolor}')&target={$trg['target']}";
 			}
