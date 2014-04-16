@@ -102,16 +102,19 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 		$datapoints = $data[0]['datapoints'];
 
 		$stats = array();
-		$first = array_shift($datapoints);
-		$min = $max = $sum = $prev = $first[0];
-		$stats[] = $min;
+		$min = PHP_INT_MAX;
+		$max = ~PHP_INT_MAX;
+		$sum = 0;
+		$prev = null;
 		$delta = 0;
 		foreach ($datapoints as $datapoint) {
 			$s = $datapoint[0];
 			if (null === $s) {
 				continue;
 			}
-			$delta += ($s - $prev);
+			if ($prev !== null) {
+				$delta += ($s - $prev);
+			}
 			$min = min($min, $s);
 			$max = max($max, $s);
 			$sum += $s;
