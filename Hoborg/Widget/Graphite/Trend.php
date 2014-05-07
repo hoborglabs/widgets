@@ -8,32 +8,53 @@ class GraphiteTrendWidget extends \Hoborg\Dashboard\Widget {
 
 		// main check for data file.
 		if (empty($config['targets'])) {
-			$widget['body'] = 'Missing or empty data configuration `widget.conf.targets`';
-			$widget['error'] = 'Missing or empty data configuration `widget.conf.targets`';
+			$this->data['error'] = $this->data['body'] = 'Missing or empty data configuration `widget.config.targets`';
 
-			$this->data = $widget;
 			return;
 		}
 
 		$tplName = empty($config['view']) ? 'view' : $config['view'];
+
+		// 07.05.2014 - breaking change
+		if (in_array($tplName, array('horizontal-fourcol', 'horizontal-threecol', 'horizontal-twocol'))) {
+			$this->data['error']  = $this->data['body'] =
+					"Please use 'horizontal' instead of '{$tplName}' for `config.view`. You can set columns number with
+					config.view_options.columns: \"five-col\"";
+
+			return;
+		}
+
 		$targetStats = array();
-		$defaultTarget = empty($config['targetsDefault']) ? array() : $config['targetsDefault'];
 		$this->graphiteUrl = $config['url'];
 		foreach ($config['targets'] as $targetConf) {
 			if (0 === strpos($tplName, 'horizontal')) {
 				$targetConf['image']['height'] = 36;
 			}
-			$p = $this->processTarget($defaultTarget + $targetConf);
+
+			$p = $this->processTarget($this->prepareTargetConfig($targetConf));
 			if (null !== $p) {
 				$targetStats[] = $p;
 			}
 		}
 
-		ob_start();
-		include __DIR__ . "/Trend/{$tplName}.phtml";
-		$widget['body'] = ob_get_clean();
+		$this->data['template'] = file_get_contents(__DIR__ . "/Trend/{$tplName}.html");
+		$this->data['data'] = array(
+			'stats' => $targetStats,
+		);
+	}
 
-		$this->data = $widget;
+	protected function prepareTargetConfig(array $target) {
+		$cfg = $this->get('config', array());
+
+		// top level defaults
+		$defaultTarget = empty($cfg['defaults']['target']) ? array() : $cfg['defaults']['target'];
+		$target = $target + $defaultTarget;
+
+		// image defaults
+		$defaultImage = empty($cfg['defaults']['image']) ? array() : $cfg['defaults']['image'];
+		$target['image'] = $target['image'] + $defaultImage;
+
+		return $target;
 	}
 
 	protected function processTarget(array $targetConf) {
