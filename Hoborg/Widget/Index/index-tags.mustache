@@ -1,0 +1,16 @@
+<div class="widget-header">{{name}}</div>
+<div class="widget-body">
+
+	<ul class="matrix {{config.view_options.list_style}}" style="padding: 10px">
+	{{#data.tags}}
+		<li class="panel">
+			<h3>{{name}}</h3>
+			<ul>
+			{{#list}}
+				<li><a href="/{{link}}">{{name}}</a> {{description}}</li>
+			{{/list}}
+			</ul>
+		</li>
+	{{/data.tags}}
+	</ul>
+</div>
