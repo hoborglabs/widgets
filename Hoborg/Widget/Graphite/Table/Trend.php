@@ -97,10 +97,10 @@ class Trend extends Graphite {
 
 	/**
 	 * Returns columns view data.
-	 * 
+	 *
 	 * The following fields will be removed (reserved)
 	 * '_defaults'
-	 * 
+	 *
 	 * @param array $columnsConfig
 	 */
 	protected function getColumns(array $columnsConfig) {
@@ -161,10 +161,10 @@ class Trend extends Graphite {
 				$defautls[] = array();
 			}
 		}
-		
+
 		return $defautls;
 	}
-	
+
 	/**
 	 * 
 	 * @param array $rowsConfig
@@ -223,13 +223,13 @@ class Trend extends Graphite {
 		$until = 'now';
 
 		// get data from graphite
-		$data = $this->getTargetsStatisticalData($config['graphiteUrl'], 
+		$data = $this->getTargetsStatisticalData($config['graphiteUrl'],
 				array_map(function($t) { return $t['target']; }, $columnTargets),
 				$from, $until);
 
 		return $data;
 	}
-	
+
 	protected function getImageData(array $targetConfig, array $targetData) {
 		$config = $this->get('config', array());
 		$img = array(
@@ -285,15 +285,15 @@ class Trend extends Graphite {
 					$targetConfig['target'] = "{$func}({$targetConfig['target']})";
 				}
 			}
-		
+
 		}
-		
+
 		if (!empty($targetConfig['image']['bands'])) {
 			$c = !empty($targetConfig['image']['color']) ? $targetConfig['image']['color'] : '3366FF';
 			$bc = '0099ff';// $this->getColor(0, 0, 100, '000000', $c);
 			$targetConfig['target'] = "color(movingAverage(holtWintersConfidenceBands(keepLastValue({$origTarget}))%2C10)%2C'{$bc}')&target={$targetConfig['target']}";
 		}
-		
+
 		if (!empty($targetConfig['image']['baseline'])) {
 			$targetConfig['target'] = "color(constantLine({$targetConfig['image']['baseline']})%2C'{$bgcolor}')&target={$targetConfig['target']}";
 		}

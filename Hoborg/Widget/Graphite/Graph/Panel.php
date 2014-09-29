@@ -36,11 +36,13 @@ class Panel extends \Hoborg\Dashboard\Widget {
 		$until = empty($conf['until']) ? 'now' : $conf['until'];
 		$height = empty($conf['height']) ? 180 : round($conf['height']);
 		$width = empty($conf['width']) ? 390 : round($conf['width']);
+		$defaults = empty($conf['defaults']) ? array() : $conf['defaults'];
 
 		$imageUrl = $graphiteUrl . "/render?from=-{$from}&until={$until}&width={$width}&height={$height}"
 				. "&bgcolor=282828&hideLegend=true&hideAxes=false&margin=5";
 
 		foreach ($conf['targets'] as $target) {
+			$target += $defaults;
 			foreach ($target as $func => $val) {
 				if (in_array($func, array('color'))) {
 					if ('color' == $func) {
@@ -49,7 +51,7 @@ class Panel extends \Hoborg\Dashboard\Widget {
 					$target['target'] = "{$func}({$target['target']}%2C'{$val}')";
 				} else if (in_array($func, array('scale', 'movingAverage', 'highestAverage', 'lineWidth', 'dashed'))) {
 					$target['target'] = "{$func}({$target['target']}%2C{$val})";
-				} else if (in_array($func, array('drawAsInfinite', 'stacked'))) {
+				} else if (in_array($func, array('drawAsInfinite', 'stacked', 'keepLastValue'))) {
 					// no params functions
 					if (!empty($val)) {
 						$target['target'] = "{$func}({$target['target']})";
