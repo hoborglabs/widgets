@@ -1,10 +1,11 @@
+<div class="widget-body">
 <ul class="matrix four-col">
 <?php foreach ($targetStats as $stat) : ?>
 <li>
   <div class="panel">
     <div>
       <span class="text-M"><?php echo $stat['name']?></span><br />
-      <?php echo $stat['unit']; ?>, max: <?php echo $stat['max']; ?>, min: <?php echo $stat['min']; ?> 
+      <?php echo $stat['unit']; ?>, max: <?php echo $stat['max']; ?>, min: <?php echo $stat['min']; ?>
     </div>
     <div style="position: relative;">
       <span class="text-L" style="color: #<?php echo $stat['color']?>"><?php echo $stat['avg']; ?></span>
@@ -20,3 +21,4 @@
 </li>
 <?php endforeach; ?>
 </ul>
+</div>

@@ -1,0 +1,33 @@
+<div class="widget-header">
+    {{name}}
+</div>
+<div class="widget-body">
+    <ul class="matrix {{config.view_options.columns}}">
+        {{#data.stats}}
+        <li>
+          <div class="panel">
+            <div style="color: #{{color}}">
+                {{#config.view_options.no_max_min}}
+                <span class="text-M">{{name}}</span> ({{unit}})<br />
+                {{/config.view_options.no_max_min}}
+
+                {{^config.view_options.no_max_min}}
+                <span class="text-M">{{name}}</span> ({{unit}})<br />
+                {{unit}}, max: {{max}}, min: {{min}}
+                {{/config.view_options.no_max_min}}
+            </div>
+            <div style="position: relative;">
+                <span class="text-L" style="color: #{{color}}">{{avg}}</span>
+                {{#img-link}}
+                    <a href="{{img-link}}" style="position: absolute; right: 10px">
+                        <img src="{{img}}"/>
+                    </a>
+                {{/img-link}}
+                {{^img-link}}
+                    <img src="{{img}}" style="position: absolute; right: 10px" />
+                {{/img-link}}
+            </div>
+        </li>
+        {{/data.stats}}
+    </ul>
+</div>
