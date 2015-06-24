@@ -1,0 +1,21 @@
+<div class="widget-header">
+{{name}}
+</div>
+<div class="widget-body">
+<ul class="matrix one-col">
+	{{#data.pulls}}
+	<li class="panel media {{ cssStyle }}">
+		<span class="media-img"><img src="{{ user.avatar_url }}" width="60" /></span>
+		<span class="media-body text-M">{{title}}</span>
+		<div>
+			<a href="{{ html_url }}">View PR</a>
+			<ul style="inline">
+			{{ #messages }}
+				<li>{{ . }}</li>
+			{{ /messages }}
+			</ul>
+		</div>
+	</li>
+	{{/data.pulls}}
+</ul>
+</div>
