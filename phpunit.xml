@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./tests/bootstrap.php"
+	beStrictAboutTestsThatDoNotTestAnything="true"
+	beStrictAboutOutputDuringTests="true"
+	colors="true"
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	processIsolation="false"
+	stopOnFailure="false"
+	syntaxCheck="true"
+>
+	<testsuites>
+		<testsuite name="Hoborg_Widgets">
+			<directory>./Hoborg/Widget</directory>
+		</testsuite>
+	</testsuites>
+
+	<!-- code coverage filters -->
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">./Hoborg/Widget</directory>
+			<exclude>
+				<file>./Hoborg/Dashboard/Exception.php</file>
+			</exclude>
+		</whitelist>
+	</filter>
+
+	<logging>
+		<log type="coverage-text" target="php://stdout" showOnlySummary="true" showUncoveredFiles="true" />
+	</logging>
+
+</phpunit>

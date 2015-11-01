@@ -3,13 +3,13 @@ namespace Hoborg\Widget;
 
 use Hoborg\Dashboard\Widget;
 
-class Contnet extends Widget {
+class Content extends Widget {
 
 	public function bootstrap() {
 		$cfg = $this->get('config', array());
 
 		if (empty($cfg['template'])) {
-			$this->data['template'] = '{{{body}}}';
+			$this->data['template'] = '{{{ body }}}';
 			$this->data['body'] = $this->getContent();
 		} else {
 			$this->data['template'] = $this->getTemplate();
@@ -33,7 +33,6 @@ class Contnet extends Widget {
 
 	protected function getTemplate() {
 		$cfg = $this->get('config', array());
-
 		$filePath = $this->kernel->findFileOnPath(
 			$cfg['template'],
 			$this->kernel->getWidgetsPath()

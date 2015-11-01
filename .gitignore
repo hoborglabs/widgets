@@ -3,5 +3,5 @@
 .settings/
 *.swp
 
-/composer.*
-!/composer.json
+/composer.phar
+/vendor
