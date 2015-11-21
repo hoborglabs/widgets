@@ -1,5 +1,5 @@
 <div class="widget-header">
-{{name}}
+{{name}} {{ #data.pulls_count }}({{ data.pulls_count }}){{ /data.pulls_count }}
 </div>
 <div class="widget-body">
 <ul class="matrix one-col">
@@ -16,6 +16,15 @@
 			</ul>
 		</div>
 	</li>
-	{{/data.pulls}}
+	{{ /data.pulls }}
+        {{ ^data.pulls }}
+            <div class="panel media" style="overflow:hidden; _overflow:visible; zoom:1;">
+                <img class="media-img" src="/images/unlocked.png" width="60" />
+                <div class="media-body">
+                    <span class="text-M">Achievement Unlocked!</span><br />
+                    No Pending Pull Requests.
+                </div>
+            </div>
+        {{ /data.pulls }}
 </ul>
 </div>

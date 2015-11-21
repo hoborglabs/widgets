@@ -8,12 +8,11 @@ class Index extends Widget {
 	public function bootstrap() {
 		$config = $this->get('config', array());
 		$view = empty($config['view']) ? 'index' : $config['view'];
-
 		$this->data['template'] = file_get_contents(__DIR__ . "/Index/{$view}.mustache");
-		$this->data['data'] = $this->getWidgetData();
+		$this->data['data'] = $this->getData();
 	}
 
-	public function getWidgetData() {
+	public function getData() {
 		$index = array(
 			'list' => array(),
 			'tags' => array(),

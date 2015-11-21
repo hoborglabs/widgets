@@ -1,0 +1,31 @@
+<div class="widget__header">
+    {{ name }}
+</div>
+<div class="widget__body">
+    <ul class="matrix two-col">
+        {{ #data.changelog }}
+        <li>
+    	    <h4>{{ config.projectName }} {{ label }}</h4>
+            {{ #commits }}
+            <div class="panel media" style="overflow:hidden; _overflow:visible; zoom:1;">
+                <img class="media-img" src="{{ author.avatar_url }}" width="60" />
+                <div class="media-body text-M">{{ commit.short_message }}</div>
+<div>
+<a href="{{ html_url }}">View Commit</a>,
+<a href="{{ jira_url }}">View JIRA</a>
+                </div>
+            </div>
+            {{ /commits }}
+            {{ ^commits }}
+            <div class="panel media" style="overflow:hidden; _overflow:visible; zoom:1;">
+                <img class="media-img" src="/images/unlocked.png" width="60" />
+                <div class="media-body">
+                    <span class="text-M">Achievement Unlocked!</span><br />
+                    No pending commits.
+                </div>
+            </div>
+            {{ /commits }}
+        </li>
+        {{ /data.changelog }}
+    </ul>
+</div>

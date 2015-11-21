@@ -13,11 +13,25 @@ class PullRequests extends \Hoborg\Dashboard\Widget {
 	public function getData() {
 		$github = $this->getGithubClient();
 		$cfg = $this->get('config', array());
+		$key = md5('pullrequests' . $cfg['repository']);
+
+                if (extension_loaded('apc')) {
+                        $data = apc_fetch($key);
+                        if ($data) {
+                                return $data;
+                        }
+                }
+
 		$pulls = $this->getPullRequests($github, $cfg['repository']);
 
 		$data = array(
-			'pulls' => $this->decoratePulls($pulls)
+			'pulls' => $this->decoratePulls($pulls),
+			'pulls_count' => count($pulls),
 		);
+
+		if (extension_loaded('apc')) {
+                        apc_store($key, $data, 180);
+                }
 
 		return $data;
 	}
@@ -72,6 +86,7 @@ class PullRequests extends \Hoborg\Dashboard\Widget {
 				'user' => $pull['user'],
 				'title' => $pull['title'],
 				'head' => $pull['head'],
+				'html_url' => $pull['html_url'],
 				'base' => $pull['base'],
 			);
 		}
