@@ -15,12 +15,12 @@ class PullRequests extends \Hoborg\Dashboard\Widget {
 		$cfg = $this->get('config', array());
 		$key = md5('pullrequests' . $cfg['repository']);
 
-                if (extension_loaded('apc')) {
-                        $data = apc_fetch($key);
-                        if ($data) {
-                                return $data;
-                        }
-                }
+		if (extension_loaded('apc')) {
+			$data = apc_fetch($key);
+			if ($data) {
+				return $data;
+			}
+		}
 
 		$pulls = $this->getPullRequests($github, $cfg['repository']);
 
@@ -30,8 +30,8 @@ class PullRequests extends \Hoborg\Dashboard\Widget {
 		);
 
 		if (extension_loaded('apc')) {
-                        apc_store($key, $data, 180);
-                }
+			apc_store($key, $data, 180);
+		}
 
 		return $data;
 	}
