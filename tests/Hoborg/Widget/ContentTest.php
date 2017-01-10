@@ -1,8 +1,6 @@
 <?php
 namespace Hoborg\Widget;
 
-include_once __DIR__ . '/Content.php';
-
 class ContentTest extends \PHPUnit_Framework_TestCase {
 
 	/** @test */

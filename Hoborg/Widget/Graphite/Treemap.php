@@ -60,9 +60,9 @@ class Treemap extends \Hoborg\Widget\Graphite\Graphite {
 				$min = min($size, $min);
 				$max = max($max, $size);
 				$treemap['children'][] = array('name' => $name, 'size' => $size, 'count' => $count);
-			} 
+			}
 		}
-		
+
 		foreach ($treemap['children'] as & $child) {
 			$child['fontSize'] = 14 + (10 * ($child['size'] - $min)/($max - $min) );
 		}

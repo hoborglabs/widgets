@@ -1,5 +1,5 @@
 <?php
-namespace Hoborg\Widget;
+namespace Hoborg\Widget\Navigation;
 
 use Hoborg\Dashboard\Widget;
 
@@ -8,11 +8,12 @@ class Index extends Widget {
 	public function bootstrap() {
 		$config = $this->get('config', array());
 		$view = empty($config['view']) ? 'index' : $config['view'];
+
 		$this->data['template'] = file_get_contents(__DIR__ . "/Index/{$view}.mustache");
-		$this->data['data'] = $this->getData();
+		$this->data['data'] = $this->getWidgetData();
 	}
 
-	public function getData() {
+	public function getWidgetData() {
 		$index = array(
 			'list' => array(),
 			'tags' => array(),
