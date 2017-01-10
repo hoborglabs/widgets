@@ -12,7 +12,7 @@ class Changelog extends \Hoborg\Dashboard\Widget {
 
 	public function getData() {
 		$cfg = $this->get('config', array());
-		$key = md5($cfg['repository']);
+		$key = md5('changelog' . serialize($cfg));
 
 		if (extension_loaded('apc')) {
 			$data = apc_fetch($key);
@@ -48,7 +48,6 @@ class Changelog extends \Hoborg\Dashboard\Widget {
 		return $github;
 	}
 
-
 	public function getViewFile() {
 		$cfg = $this->get('config', array());
 		return __DIR__ . '/Changelog/views/' . (empty($cfg['view']) ? 'default' : $cfg['view'] ) . '.html';
@@ -59,12 +58,13 @@ class Changelog extends \Hoborg\Dashboard\Widget {
 	}
 
 	protected function getChangelog($github, $repo, $from, $to) {
+		$cfg = $this->get('config', array());
 
 		$fromTag = $github->get("/repos/{$repo}/git/refs/tags/${from}");
-		$fromSha = $this->getCommitFromTag($github, $repo, $fromTag['object']['sha']);
+		$fromSha = $this->getCommitFromTag($github, $repo, $fromTag);
 
 		$toTag = $github->get("/repos/{$repo}/git/refs/tags/${to}");
-		$toSha = $this->getCommitFromTag($github, $repo, $toTag['object']['sha']);
+		$toSha = $this->getCommitFromTag($github, $repo, $toTag);
 
 		$repos = $github->get("/repos/{$repo}/compare/{$fromSha}...{$toSha}");
 		$changelog = [ 'commits' => [], 'files' => $repos['files'] ];
@@ -73,8 +73,8 @@ class Changelog extends \Hoborg\Dashboard\Widget {
 			if (count($commit['parents']) == 1) {
 				$commit['commit']['short_message'] = strtok($commit['commit']['message'], "\n");
 
-				$jiraId = preg_replace('/\[(.*?)\].*/', '$1', $commit['commit']['short_message']);
-				$commit['jira_url'] = "https://sainsburys.atlassian.net/browse/" . $jiraId;
+				$jiraId = preg_replace("/${cfg['jira_regexp']}/", '$1', $commit['commit']['short_message']);
+				$commit['jira_url'] = "${cfg['jira_url']}/browse/" . $jiraId;
 
 				$changelog['commits'][] = $commit;
 			}
@@ -83,15 +83,14 @@ class Changelog extends \Hoborg\Dashboard\Widget {
 		return $changelog;
 	}
 
-	protected function getCommitFromTag($github, $repo, $tagSha) {
-		$response = $github->get("/repos/{$repo}/git/tags/{$tagSha}");
-
-		if ('commit' == $response['object']['type']) {
-			return $response['object']['sha'];
+	protected function getCommitFromTag($github, $repo, $tag) {
+		if ('commit' == $tag['object']['type']) {
+			return $tag['object']['sha'];
 		}
 
-		if ('tag' == $response['object']['type']) {
-			return $this->getCommitFromTag($github, $repo, $response['object']['sha']);
+		if ('tag' == $tag['object']['type']) {
+			$response = $github->get("/repos/{$repo}/git/tags/{$tag['object']['sha']}");
+			return $this->getCommitFromTag($github, $repo, $response);
 		}
 	}
 }

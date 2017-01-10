@@ -21,7 +21,7 @@ class HttpCheck extends \Hoborg\Dashboard\Widget {
 	}
 
 	public function bootstrap() {
-		$this->httpClient = new \GuzzleHttp\Client();
+		$this->httpClient = new \GuzzleHttp\Client([ 'defaults' => [ 'verify' => false ] ]);
 		$this->setupTemplate();
 		$this->data['data'] = $this->getData();
 	}
@@ -45,7 +45,7 @@ class HttpCheck extends \Hoborg\Dashboard\Widget {
 		];
 
 		try {
-			$res = $this->httpClient->get($check['url']);
+			$res = $this->httpClient->get($check['url'], [ 'timeout' => 5 ]);
 		} catch (\GuzzleHttp\Exception\ClientException $e) {
 			$res = $e->getResponse();
 		} catch (\Exception $e) {
