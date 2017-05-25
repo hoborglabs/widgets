@@ -27,6 +27,9 @@ class Ips extends Widget {
 		}
 
 		$env = $cfg['environment'];
+		$tag_name_env = empty($cfg['tag_name_environment']) ? 'Environment' : $cfg['tag_name_environment'];
+		$tag_name_role = empty($cfg['tag_name_role']) ? 'Role' : $cfg['tag_name_role'];
+
 		$data = array();
 
 		$ec2Client = $this->getEc2Client();
@@ -39,7 +42,7 @@ class Ips extends Widget {
 						'Values' => array( 'running' )
 					),
 					array(
-						'Name' => 'tag:Environment',
+						'Name' => 'tag:'.$tag_name_env,
 						'Values' => [ $env ]
 					)
 				)
@@ -55,11 +58,10 @@ class Ips extends Widget {
 			return $data;
 		}
 
-		$data = array_map(function($reservation) {
-
-			$ip_data = array_map(function($instance) {
-				$roleTags = array_filter($instance['Tags'], function($tag) {
-					return $tag['Key'] == 'Role';
+		$data = array_map(function($reservation) use ($tag_name_role) {
+			$ip_data = array_map(function($instance) use ($tag_name_role) {
+				$roleTags = array_filter($instance['Tags'], function($tag) use ($tag_name_role) {
+					return $tag['Key'] == $tag_name_role;
 				});
 				if(empty($roleTags)) {
 					return false;
